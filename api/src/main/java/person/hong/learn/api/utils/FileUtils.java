@@ -1,6 +1,6 @@
 package person.hong.learn.api.utils;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -52,5 +52,17 @@ public class FileUtils {
         for (File son: sons) {
             searchFile(son, subsFilePath);
         }
+    }
+
+    public static String readFileWithEncoding(String path, String encode) throws IOException {
+        File file = new File(path);
+        InputStream in = new FileInputStream(file);
+        byte[] bytes = new byte[1024];
+        int len = 0;
+        StringBuilder sb = new StringBuilder();
+        while ((len = in.read(bytes))!=-1) {
+            sb.append(new String(bytes, 0, len, encode));
+        }
+        return sb.toString();
     }
 }
