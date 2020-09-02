@@ -1,5 +1,8 @@
 package person.hong.learn.api.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +21,7 @@ import java.io.IOException;
 @Controller
 @RequestMapping("file")
 public class FileController {
+    private static final Logger logger = LogManager.getLogger(FileController.class);
     /**
      * @description 上传单个文件
      * @param file
