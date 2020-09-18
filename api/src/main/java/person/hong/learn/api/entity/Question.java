@@ -1,5 +1,7 @@
 package person.hong.learn.api.entity;
 
+import java.util.Date;
+
 /**
  * @description:
  * @author: 洪晓鸿
@@ -7,8 +9,26 @@ package person.hong.learn.api.entity;
  */
 
 public class Question {
+    private int id;
     private String title;
     private String content;
+    private Date createDate;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
 
     public String getTitle() {
         return title;
