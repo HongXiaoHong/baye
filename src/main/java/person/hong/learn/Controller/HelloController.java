@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import person.hong.learn.study.ValueSet;
 
 import java.util.List;
 import java.util.Map;
@@ -19,12 +20,16 @@ import java.util.Map;
 public class HelloController {
 
     @Autowired
+    ValueSet valueSet;
+
+    @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @RequestMapping("/first")
     public String hello() {
         List<Map<String, Object>> test = test();
         System.out.println(test);
+        System.out.println(valueSet);
         return "hello spring";
     }
 
