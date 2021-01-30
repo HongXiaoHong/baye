@@ -1,4 +1,18 @@
 # groovy 
+
+## 项目结构
+
+groovy-learn 就是学习的module
+
+groovy是一种弱类型的的语言
+
+
+## 基础
+
+
+## 精通
+
+
 ## 让人觉得惊艳的点
 - 闭包
 - 正则表达式
@@ -44,11 +58,3 @@ delegate 对应于第三方对象，无论何时未定义消息的接收者，�
 可以参考
 [闭包](http://groovy-lang.org/closures.html)
 这里已经讲的很清楚了
-
-## 项目结构
-
-groovy-learn 就是学习的module
-
-groovy是一种弱类型的的语言
-
-
