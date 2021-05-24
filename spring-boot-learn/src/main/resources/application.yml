@@ -10,3 +10,6 @@ food:
   fruit: "apple"
   vegetable: "tomato"
   drink: "milk"
+logging:
+  pattern:
+    console:

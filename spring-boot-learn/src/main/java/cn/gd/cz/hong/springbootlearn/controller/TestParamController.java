@@ -17,14 +17,6 @@ import java.util.Map;
 @RequestMapping("/test/param")
 public class TestParamController {
 
-    @Autowired
-    private Food food;
-
-    @PostConstruct
-    public void init() {
-        System.out.println(" food : " + food);
-    }
-
     /**
      * req
      * http://localhost:8011/test/param/post/simple
