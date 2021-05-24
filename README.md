@@ -327,6 +327,8 @@ public interface UserDao {
 </mapper>
 ```
 
+参考[SpringBoot 整合 Mybatis 和 Mysql （详细版）](https://www.cnblogs.com/wangzh1guo/p/9996526.html)
+
 6. 自测
 
 ```java
