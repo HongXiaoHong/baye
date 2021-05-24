@@ -13,6 +13,7 @@
 参考 [Spring Boot非Web项目运行的方法](https://www.jb51.net/article/169744.htm)
 
 spring-boot-starter-web -> spring-boot-starter
+
 ```xml
 
 <dependency>
@@ -36,11 +37,13 @@ Thread.currentThread().join(); }
 
 常见的有：
 
-日志门面 : 
+日志门面 :
+
 - JCL
 - slf4j
 
-日志实现 : 
+日志实现 :
+
 - JUL
 - logback
 - log4j
@@ -150,12 +153,34 @@ SLF4J: Actual binding is of type [ch.qos.logback.classic.util.ContextSelectorSta
 主要思想： 将继承关系转化为组合关系
 
 ### database
+
 #### MySQL
+
 首先你本地要安装好MySQL 这里不做赘述
 
 1. 引入jdbc starter 还有就是MySQL驱动
+
 ```xml
 
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-jdbc</artifactId>
+</dependency>
+<dependency>
+<groupId>mysql</groupId>
+<artifactId>mysql-connector-java</artifactId>
+</dependency>
+```
+
+2. application.yml 增加配置
+
+```yaml
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: 123
+    url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
 ```
 
 ### 配置
