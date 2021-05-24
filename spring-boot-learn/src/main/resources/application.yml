@@ -48,8 +48,17 @@ spring:
         login-username: root
         login-password: 123
 
+
 food:
   meet: "beef"
   fruit: "apple"
   vegetable: "tomato"
   drink: "milk"
+mybatis:
+  # 实体类
+  type-aliases-package: cn.gd.cz.hong.springbootlearn.entity
+  # 配置文件
+  mapper-locations: mapper/*/*Mapper.xml
+
+server:
+  port: 8086

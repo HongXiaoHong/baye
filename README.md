@@ -253,8 +253,95 @@ spring:
 这里出现一个错误 SPRING BOOT :NO CONVERTER FOUND CAPABLE OF CONVERTING FROM TYPE [JAVA.LANG.STRING] TO TYPE
 可以参考 [SPRING BOOT :NO CONVERTER FOUND CAPABLE OF CONVERTING FROM TYPE -JAVA.LANG.STRING- TO TYPE](https://www.freesion.com/article/1986388352/)
 
+# 配置监控统计拦截的 Filter，去掉后监控界面 SQL 无法统计，wall 用于防火墙
+
+      filters: stat,wall,log4j2
+
+这里的配置 log4j2 估计跟换了日志框架 log4j2 有关 这里需要注意一下
+
 druid 配置参考
 [SpringBoot 三种方式配置 Druid](https://www.cnblogs.com/yjq520/p/10779356.html)
+
+#### mybatis
+
+1. 导入 mybatis-spring-boot-starter jar 包
+
+```xml
+
+<dependency>
+    <groupId>org.mybatis.spring.boot</groupId>
+    <artifactId>mybatis-spring-boot-starter</artifactId>
+    <version>2.1.4</version>
+</dependency>
+```
+
+2. 配置 实体类跟配置文件的位置
+
+```yaml
+mybatis:
+  # 实体类
+  type-aliases-package: cn.gd.cz.hong.springbootlearn.entity
+  # 配置文件
+  mapper-locations: mapper/*/*Mapper.xml
+
+```
+
+3. 启动类配置扫描mapper
+
+```java
+@MapperScan("cn.gd.cz.hong.springbootlearn.dao")
+```
+
+4. 编写接口
+
+```java
+
+@Mapper
+public interface UserDao {
+
+    User selectById(String id);
+}
+```
+
+5. 编写sql
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.gd.cz.hong.springbootlearn.dao.UserDao">
+    <resultMap id="BaseResultMap" type="cn.gd.cz.hong.springbootlearn.entity.User">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="birthday" property="birthday" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, name, password, birthday
+    </sql>
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where id = #{id}
+    </select>
+</mapper>
+```
+
+6. 自测
+
+```java
+private static final Logger LOGGER=
+        LoggerFactory.getLogger(UserController.class);
+
+@Autowired
+    UserDao userDao;
+
+@PostConstruct
+public void init(){
+        User user=userDao.selectById("1");
+        LOGGER.info("user : {}",user);
+        }
+```
 
 ### 配置
 
