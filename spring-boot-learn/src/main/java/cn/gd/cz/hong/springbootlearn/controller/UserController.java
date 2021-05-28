@@ -1,6 +1,7 @@
 package cn.gd.cz.hong.springbootlearn.controller;
 
 import cn.gd.cz.hong.springbootlearn.dao.UserDao;
+import cn.gd.cz.hong.springbootlearn.dao.UserMapper;
 import cn.gd.cz.hong.springbootlearn.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +20,15 @@ public class UserController {
 
     @Autowired
     UserDao userDao;
+    @Autowired
+    UserMapper userMapper;
 
     @PostConstruct
     public void init(){
         User user = userDao.selectById("1");
         LOGGER.info("user : {}", user);
+
+        User little_ming = userMapper.selectById("1");
+        LOGGER.info("little_ming : {}", little_ming);
     }
 }

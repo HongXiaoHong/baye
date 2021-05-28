@@ -1,7 +1,7 @@
 package cn.gd.cz.hong.springbootlearn.entity;
 
 /**
- * 用户
+ * 用户 用于mybatis-plus时 类名小写即是表名
  */
 public class User {
     private String id;

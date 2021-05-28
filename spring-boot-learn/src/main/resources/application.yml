@@ -62,3 +62,6 @@ mybatis:
 
 server:
   port: 8086
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
