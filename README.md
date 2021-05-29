@@ -345,6 +345,61 @@ public void init(){
         }
 ```
 
+#### mybatis-plus
+
+##### 初识
+
+添加pom.xml
+
+```xml
+
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-boot-starter</artifactId>
+    <version>3.4.2</version>
+</dependency>
+```
+
+mapper 只要集成 BaseMapper 就可以使用默认的方法
+泛型的类 = 实体类 = 用于mybatis-plus时 类名小写即是表名
+可参见 UserMapper
+
+##### 自动生成代码
+
+添加 pom.xml
+```xml
+<!-- 自动生成代码 -->
+		<dependency>
+			<groupId>com.baomidou</groupId>
+			<artifactId>mybatis-plus-generator</artifactId>
+			<version>3.4.1</version>
+		</dependency>
+		<!-- 添加 模板引擎 依赖 -->
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity-engine-core</artifactId>
+			<version>2.3</version>
+		</dependency>
+		<!-- 这里限制了版本号 是因为高版本的没有了类 自动生成类会报错-->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.7</version>
+		</dependency>
+		<!-- 自动生成代码 -->
+```
+
+具体的生成类参见
+> cn/gd/cz/hong/springbootlearn/auto/genarate/AutoGenerationTest.java
+
+自动生成 mapper mapper.xml service controller entity
+
+期间出现一次错误
+> Unsatisfied dependency expressed through field 'baseMapper';
+
+原因是mapper 没有加上@Mapper
+还有就是application.yml 还有就是 @MapperScan路径问题
+
 ### 配置
 
 #### 自定义配置生成元数据
