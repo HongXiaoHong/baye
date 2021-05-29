@@ -347,6 +347,7 @@ public void init(){
 
 #### mybatis-plus
 
+学它 [MyBatis-Plus 用起来真的很舒服](https://www.cnblogs.com/l-y-h/p/12859477.html)
 ##### 初识
 
 添加pom.xml
