@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * @author hong
  */
-@MapperScan("cn.gd.cz.hong.springbootlearn.dao")
+@MapperScan("cn.gd.cz.hong.springbootlearn.mapper")
 @SpringBootApplication
 public class SpringBootLearnApplication {
 

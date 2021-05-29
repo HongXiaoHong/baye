@@ -1,4 +1,4 @@
-package cn.gd.cz.hong.springbootlearn.dao;
+package cn.gd.cz.hong.springbootlearn.mapper;
 
 import cn.gd.cz.hong.springbootlearn.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

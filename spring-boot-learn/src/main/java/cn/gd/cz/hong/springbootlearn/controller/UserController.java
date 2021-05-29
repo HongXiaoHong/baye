@@ -1,7 +1,7 @@
 package cn.gd.cz.hong.springbootlearn.controller;
 
-import cn.gd.cz.hong.springbootlearn.dao.UserDao;
-import cn.gd.cz.hong.springbootlearn.dao.UserMapper;
+import cn.gd.cz.hong.springbootlearn.mapper.UserDao;
+import cn.gd.cz.hong.springbootlearn.mapper.UserMapper;
 import cn.gd.cz.hong.springbootlearn.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
