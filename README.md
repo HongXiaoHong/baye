@@ -348,6 +348,7 @@ public void init(){
 #### mybatis-plus
 
 学它 [MyBatis-Plus 用起来真的很舒服](https://www.cnblogs.com/l-y-h/p/12859477.html)
+
 ##### 初识
 
 添加pom.xml
@@ -361,33 +362,32 @@ public void init(){
 </dependency>
 ```
 
-mapper 只要集成 BaseMapper 就可以使用默认的方法
-泛型的类 = 实体类 = 用于mybatis-plus时 类名小写即是表名
-可参见 UserMapper
+mapper 只要集成 BaseMapper 就可以使用默认的方法 泛型的类 = 实体类 = 用于mybatis-plus时 类名小写即是表名 可参见 UserMapper
 
 ##### 自动生成代码
 
 添加 pom.xml
+
 ```xml
 <!-- 自动生成代码 -->
-		<dependency>
-			<groupId>com.baomidou</groupId>
-			<artifactId>mybatis-plus-generator</artifactId>
-			<version>3.4.1</version>
-		</dependency>
-		<!-- 添加 模板引擎 依赖 -->
-		<dependency>
-			<groupId>org.apache.velocity</groupId>
-			<artifactId>velocity-engine-core</artifactId>
-			<version>2.3</version>
-		</dependency>
-		<!-- 这里限制了版本号 是因为高版本的没有了类 自动生成类会报错-->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.7</version>
-		</dependency>
-		<!-- 自动生成代码 -->
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-generator</artifactId>
+    <version>3.4.1</version>
+</dependency>
+        <!-- 添加 模板引擎 依赖 -->
+<dependency>
+<groupId>org.apache.velocity</groupId>
+<artifactId>velocity-engine-core</artifactId>
+<version>2.3</version>
+</dependency>
+        <!-- 这里限制了版本号 是因为高版本的没有了类 自动生成类会报错-->
+<dependency>
+<groupId>org.apache.commons</groupId>
+<artifactId>commons-lang3</artifactId>
+<version>3.7</version>
+</dependency>
+        <!-- 自动生成代码 -->
 ```
 
 具体的生成类参见
@@ -398,8 +398,31 @@ mapper 只要集成 BaseMapper 就可以使用默认的方法
 期间出现一次错误
 > Unsatisfied dependency expressed through field 'baseMapper';
 
-原因是mapper 没有加上@Mapper
-还有就是application.yml 还有就是 @MapperScan路径问题
+原因是mapper 没有加上@Mapper 还有就是application.yml 还有就是 @MapperScan路径问题
+
+#### swagger
+
+##### swagger2
+
+引入springfox-swaggger2 跟 springfox-swagger-ui
+这里之前引入的是 3.0.0版本的 但是没有成功  后面换成了低版本就可以了
+```xml
+<!--:)swagger2-生成api文档  -->
+<dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-swagger2</artifactId>
+    <version>2.8.0</version>
+</dependency>
+<dependency>
+<groupId>io.springfox</groupId>
+<artifactId>springfox-swagger-ui</artifactId>
+<version>2.8.0</version>
+</dependency>
+<!--swagger2-生成api文档:~ -->
+```
+添加配置 参见 SwaggerConfig.java
+
+
 
 ### 配置
 
