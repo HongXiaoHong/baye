@@ -17,7 +17,7 @@ import java.io.Serializable;
  * @author 洪晓鸿
  * @since 2021-05-29
  */
-public class Role implements Serializable {
+public class Role {
 
     private static final long serialVersionUID = 1L;
 
