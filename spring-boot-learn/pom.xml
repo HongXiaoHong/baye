@@ -72,12 +72,28 @@
 			<groupId>com.baomidou</groupId>
 			<artifactId>mybatis-plus-boot-starter</artifactId>
 			<version>3.4.2</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>mybatis-spring</artifactId>
+					<groupId>org.mybatis</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- 自动生成代码 -->
 		<dependency>
 			<groupId>com.baomidou</groupId>
 			<artifactId>mybatis-plus-generator</artifactId>
 			<version>3.4.1</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>mybatis-spring</artifactId>
+					<groupId>org.mybatis</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>mybatis-plus-extension</artifactId>
+					<groupId>com.baomidou</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- 添加 模板引擎 依赖 -->
 		<dependency>
@@ -89,7 +105,6 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.7</version>
 		</dependency>
 		<!-- 自动生成代码 -->
 		<!-- mybatis-plus -->
@@ -105,6 +120,11 @@
 			<version>2.8.0</version>
 		</dependency>
 		<!--swagger2-生成api文档:~ -->
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+
 	</dependencies>
 
 </project>

@@ -1,4 +1,4 @@
-package cn.gd.cz.hong.springbootlearn.param;
+package cn.gd.cz.hong.springbootlearn.extra.param;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

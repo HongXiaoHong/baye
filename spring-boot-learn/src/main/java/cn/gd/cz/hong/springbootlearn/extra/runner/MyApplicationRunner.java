@@ -1,6 +1,6 @@
-package cn.gd.cz.hong.springbootlearn.runner;
+package cn.gd.cz.hong.springbootlearn.extra.runner;
 
-import cn.gd.cz.hong.springbootlearn.param.Food;
+import cn.gd.cz.hong.springbootlearn.extra.param.Food;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
