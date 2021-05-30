@@ -401,6 +401,7 @@ mapper 只要集成 BaseMapper 就可以使用默认的方法 泛型的类 = 实
 原因是mapper 没有加上@Mapper 还有就是application.yml 还有就是 @MapperScan路径问题
 
 ##### 条件构造器（Wrapper，定义 where 条件）
+
 ```text
 Wrapper  条件构造抽象类
     -- AbstractWrapper 查询条件封装，用于生成 sql 中的 where 语句。
@@ -412,6 +413,7 @@ Wrapper  条件构造抽象类
 ```
 
 ###### wrapper常用方法
+
 ```text
 【通用条件：】
 【比较大小： ( =, <>, >, >=, <, <= )】
@@ -465,12 +467,13 @@ Wrapper  条件构造抽象类
     etSql(String sql); // 用于设置 set 字段值。例: setSql("name = '老李头'") ---> set name = '老李头'
     lambda(); // 返回一个 LambdaUpdateWrapper
 ```
+
 #### swagger
 
 ##### swagger2
 
-引入springfox-swaggger2 跟 springfox-swagger-ui
-这里之前引入的是 3.0.0版本的 但是没有成功  后面换成了低版本就可以了
+引入springfox-swaggger2 跟 springfox-swagger-ui 这里之前引入的是 3.0.0版本的 但是没有成功 后面换成了低版本就可以了
+
 ```xml
 <!--:)swagger2-生成api文档  -->
 <dependency>
@@ -483,12 +486,51 @@ Wrapper  条件构造抽象类
 <artifactId>springfox-swagger-ui</artifactId>
 <version>2.8.0</version>
 </dependency>
-<!--swagger2-生成api文档:~ -->
+        <!--swagger2-生成api文档:~ -->
 ```
+
 添加配置 参见 SwaggerConfig.java
 
-可访问本地 [swagger-ui-localhost](http://localhost:8080/swagger-ui.html) 
+可访问本地 [swagger-ui-localhost](http://localhost:8080/swagger-ui.html)
 查看接口列表 也可用于测试
+
+#### redis
+
+##### install
+
+[win10安装redis及redis客户端使用方法](https://blog.csdn.net/office5845/article/details/78017925?utm_medium=distribute.pc_relevant.none-task-blog-baidujs_baidulandingword-4&spm=1001.2101.3001.4242)
+[windows redis download url](https://github.com/microsoftarchive/redis/releases)
+[Redis可视化客户端汇总](https://blog.csdn.net/u012723183/article/details/103409820)
+[AnotherRedisDesktopManager download](https://github.com/qishibo/AnotherRedisDesktopManager/releases)
+
+#####  
+
+pom.xml
+
+```xml
+<!-- redis -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
+</dependency>
+        <!-- redis -->
+```
+
+application.yml
+```yaml
+spring:
+  redis:
+    database: 0 # Redis数据库索引（默认为0）
+    host: 127.0.0.1 # Redis服务器地址
+    port: 6379 # Redis服务器连接端口
+    password: '' # Redis服务器连接密码（默认为空）
+    timeout: 0 # 连接超时时间（毫秒）
+    pool:
+      max-active: 8 # 连接池最大连接数（使用负值表示没有限制）
+      max-idle: 8 # 连接池最大阻塞等待时间（使用负值表示没有限制）
+      max-wait: -1 # 连接池中的最大空闲连接
+      min-idle: 0 # 连接池中的最小空闲连接
+```
 
 ### 配置
 

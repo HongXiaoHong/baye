@@ -120,11 +120,18 @@
 			<version>2.8.0</version>
 		</dependency>
 		<!--swagger2-生成api文档:~ -->
+		<!--:)validator impl add to use @Validated -->
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
-
+		<!-- validator impl add to use @Validated:~-->
+		<!-- redis -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+		<!-- redis -->
 	</dependencies>
 
 </project>
