@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  *
@@ -42,6 +40,37 @@ public class RedisController {
             redisTemplate.opsForValue().set("role_" + role.getRoleId(), role);
             LOGGER.info("add role to redis");
         }
+        return result;
+    }
+
+    @ApiOperation("test")
+    @PutMapping("/test")
+    public Map<String, Object> test() {
+        Map<String, Object> result = new HashMap<String, Object>() {{
+            put("code", "200");
+            put("message", "success");
+        }};
+//        List<String> list1 = new ArrayList<String>();
+//        list1.add("a1");
+//        list1.add("a2");
+//        list1.add("a3");
+//
+//        List<String> list2 = new ArrayList<String>();
+//        list2.add("b1");
+//        list2.add("b2");
+//        list2.add("b3");
+//        redisTemplate.opsForList().leftPush("listkey1", list2);
+//        redisTemplate.opsForList().rightPush("listkey2", list1);
+//        List<String> resultList1 = (List<String>) redisTemplate.opsForList().range("listkey1", 0, 2);
+//        List<String> resultList2 = (List<String>) redisTemplate.opsForList().rightPop("listkey2");
+//        System.out.println("resultList1:" + resultList1);
+//        System.out.println("resultList2:" + resultList2);
+
+        List<Role> roles = new LinkedList<Role>() {{
+            add(new Role(2, "simple"));
+            add(new Role(3, "special"));
+        }};
+        redisTemplate.opsForValue().set("roles", roles);
         return result;
     }
 }

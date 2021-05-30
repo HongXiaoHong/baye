@@ -6,6 +6,8 @@ import cn.gd.cz.hong.springbootlearn.service.RoleService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -14,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,18 +35,6 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
 
-    @ApiOperation("通过roleId或者roleName获取角色")
-    @GetMapping("getRole")
-    public Map<String, Object> getRole(@Validated Role condition) {
-        Map<String, Object> result = new HashMap<String, Object>() {{
-            put("code", "200");
-            put("message", "success");
-        }};
-        Role role = roleService.getById(condition.getRoleId());
-        result.put("body", role);
-        return result;
-    }
-
     @ApiOperation("通过roleId或者roleName获取角色条数")
     @PostMapping("getRoleCount")
     public Map<String, Object> getRoleCount(@Validated @RequestBody Role condition) {
@@ -57,6 +48,25 @@ public class RoleController {
         int count = roleService.count(queryWrapper);
         result.put("count", count);
         return result;
+    }
+
+    @ApiOperation("通过roleId或者roleName获取角色")
+    @GetMapping("getRole")
+    public Map<String, Object> getRole(@Validated Role condition) {
+        Map<String, Object> result = new HashMap<String, Object>() {{
+            put("code", "200");
+            put("message", "success");
+        }};
+        Role role = roleService.getById(condition.getRoleId());
+        result.put("body", role);
+        return result;
+    }
+
+    @ApiOperation("获取所有角色")
+    @GetMapping("/list")
+    public List<Role> list() {
+        List<Role> roles = roleService.findAll();
+        return roles;
     }
 }
 

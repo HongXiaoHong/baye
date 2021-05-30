@@ -17,10 +17,9 @@ import java.io.Serializable;
  * @author 洪晓鸿
  * @since 2021-05-29
  */
-public class Role {
+public class Role implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
+    private static final long serialVersionUID = 1761412061975694085L;
     /**
      * 角色ID
      */
@@ -41,6 +40,14 @@ public class Role {
      * 请求报文 输出报文打印
      * -----------------------------------
      * */
+
+    public Role() {
+    }
+
+    public Role(@NotNull Integer roleId, @NotBlank String roleName) {
+        this.roleId = roleId;
+        this.roleName = roleName;
+    }
 
     public Integer getRoleId() {
         return roleId;

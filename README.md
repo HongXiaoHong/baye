@@ -614,6 +614,49 @@ java.io.InvalidClassException: cn.gd.cz.hong.springbootlearn.entity.Role; class 
 	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_202]
 
 ```
+
+集成 redis
+1. 自定义Redistemplate 序列化为json
+   存在问题：
+   无法识别自己存入的value
+
+```text
+java.lang.ClassCastException: java.util.LinkedHashMap cannot be cast to cn.gd.cz.hong.springbootlearn.entity.Role
+at cn.gd.cz.hong.springbootlearn.controller.RedisController.addRole(RedisController.java:39) ~[classes/:?]
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_202]
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_202]
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_202]
+at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_202]
+at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:197) ~[spring-web-5.3.6.jar:5.3.6]
+at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:141) ~[spring-web-5.3.6.jar:5.3.6]
+at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:106) ~[spring-webmvc-5.3.6.jar:5.3.6]
+at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:894) ~[spring-webmvc-5.3.6.jar:5.3.6]
+at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:808) ~[spring-webmvc-5.3.6.jar:5.3.6]
+at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-5.3.6.jar:5.3.6]
+at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1060) ~[spring-webmvc-5.3.6.jar:5.3.6]
+at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:962) ~[spring-webmvc-5.3.6.jar:5.3.6]
+at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006) ~[spring-webmvc-5.3.6.jar:5.3.6]
+at org.springframework.web.servlet.FrameworkServlet.doPut(FrameworkServlet.java:920) ~[spring-webmvc-5.3.6.jar:5.3.6]
+```
+2. 将序列化改为 GenericJackson2JsonRedisSerializer 即可
+   但是使用 @Cacheable("role_list") 序列化List 仍然不行 底层还是用了 jdk的序列化
+3. 配置多一个 RedisCacheManager 可以让 list 序列化
+```java
+/**
+     * 加上这个配置之后 
+     * @Cacheable("role_list") 在Redis中也是用json序列化的
+     * @param redisTemplate
+     * @return
+     */
+    @Bean
+    public RedisCacheManager redisCacheManager(RedisTemplate redisTemplate) {
+        RedisCacheWriter redisCacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(redisTemplate.getConnectionFactory());
+        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisTemplate.getValueSerializer()));
+        return new RedisCacheManager(redisCacheWriter, redisCacheConfiguration);
+    }
+```
+
 ### 配置
 
 #### 自定义配置生成元数据
