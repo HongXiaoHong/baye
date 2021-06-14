@@ -8,6 +8,7 @@ class SpringBootLearnApplicationTests {
 
 	@Test
 	void contextLoads() {
+		System.out.println("contextLoadsd");
 	}
 
 }
