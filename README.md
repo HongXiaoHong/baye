@@ -503,7 +503,7 @@ Wrapper  条件构造抽象类
 [Redis可视化客户端汇总](https://blog.csdn.net/u012723183/article/details/103409820)
 [AnotherRedisDesktopManager download](https://github.com/qishibo/AnotherRedisDesktopManager/releases)
 
-#####  
+#####   
 
 pom.xml
 
@@ -517,6 +517,7 @@ pom.xml
 ```
 
 application.yml
+
 ```yaml
 spring:
   redis:
@@ -535,11 +536,11 @@ spring:
 ##### use
 
 bean 不加上
->  implements Serializable
+> implements Serializable
 
-序列化的时候会出现问题
-例如
+序列化的时候会出现问题 例如
 > Role roleFromCache = (Role) redisTemplate.opsForValue().get("role_" + role.getRoleId());
+
 ```text
 16:22:16.712 [http-nio-8080-exec-1] [ERROR] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/].[dispatcherServlet]:175 --- Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is org.springframework.data.redis.serializer.SerializationException: Cannot deserialize; nested exception is org.springframework.core.serializer.support.SerializationFailedException: Failed to deserialize payload. Is the byte array a result of corresponding serialization for DefaultDeserializer?; nested exception is java.io.InvalidClassException: cn.gd.cz.hong.springbootlearn.entity.Role; class invalid for deserialization] with root cause
 java.io.InvalidClassException: cn.gd.cz.hong.springbootlearn.entity.Role; class invalid for deserialization
@@ -616,9 +617,8 @@ java.io.InvalidClassException: cn.gd.cz.hong.springbootlearn.entity.Role; class 
 ```
 
 集成 redis
-1. 自定义Redistemplate 序列化为json
-   存在问题：
-   无法识别自己存入的value
+
+1. 自定义Redistemplate 序列化为json 存在问题： 无法识别自己存入的value
 
 ```text
 java.lang.ClassCastException: java.util.LinkedHashMap cannot be cast to cn.gd.cz.hong.springbootlearn.entity.Role
@@ -638,24 +638,67 @@ at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet
 at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006) ~[spring-webmvc-5.3.6.jar:5.3.6]
 at org.springframework.web.servlet.FrameworkServlet.doPut(FrameworkServlet.java:920) ~[spring-webmvc-5.3.6.jar:5.3.6]
 ```
-2. 将序列化改为 GenericJackson2JsonRedisSerializer 即可
-   但是使用 @Cacheable("role_list") 序列化List 仍然不行 底层还是用了 jdk的序列化
+
+2. 将序列化改为 GenericJackson2JsonRedisSerializer 即可 但是使用 @Cacheable("role_list") 序列化List 仍然不行 底层还是用了 jdk的序列化
 3. 配置多一个 RedisCacheManager 可以让 list 序列化
+
 ```java
 /**
-     * 加上这个配置之后 
-     * @Cacheable("role_list") 在Redis中也是用json序列化的
-     * @param redisTemplate
-     * @return
-     */
-    @Bean
-    public RedisCacheManager redisCacheManager(RedisTemplate redisTemplate) {
-        RedisCacheWriter redisCacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(redisTemplate.getConnectionFactory());
-        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisTemplate.getValueSerializer()));
-        return new RedisCacheManager(redisCacheWriter, redisCacheConfiguration);
-    }
+ * 加上这个配置之后 
+ * @Cacheable("role_list") 在Redis中也是用json序列化的
+ * @param redisTemplate
+ * @return
+ */
+@Bean
+public RedisCacheManager redisCacheManager(RedisTemplate redisTemplate){
+        RedisCacheWriter redisCacheWriter=RedisCacheWriter.nonLockingRedisCacheWriter(redisTemplate.getConnectionFactory());
+        RedisCacheConfiguration redisCacheConfiguration=RedisCacheConfiguration.defaultCacheConfig()
+        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisTemplate.getValueSerializer()));
+        return new RedisCacheManager(redisCacheWriter,redisCacheConfiguration);
+        }
 ```
+
+### 集成docker
+
+#### windows安装docker
+
+##### 集成k8s
+
+#### springboot idea集成docker
+
+1. pom.xml中加入docker-maven-plugin插件
+
+```xml
+
+<plugin>
+    <groupId>com.spotify</groupId>
+    <artifactId>docker-maven-plugin</artifactId>
+    <version>0.4.9</version>
+</plugin>
+```
+
+2. 本地在pom.xml同层 创建配置Dockerfile
+```dockerfile
+FROM openjdk:8-jdk-alpine
+ARG JAR_FILE=target/hong-demo.jar
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
+EXPOSE 8888
+```
+dockerfile编写可参考[Spring Boot with Docker](https://spring.io/guides/gs/spring-boot-docker/)
+
+3. 在idea中配置仓库地址
+![docker仓库配置](./images/dockerfile.png)
+参考[idea中安装docker插件](https://www.jianshu.com/p/b79b555e9bce)
+
+4. 新建docker配置
+![docker配置](./images/docker-configiration.png)
+   这里可以参考[idea+springboot+dockerfile](https://www.jianshu.com/p/afab984bb3d9)
+
+5. 运行 验证
+![成功访问](./images/docker-success.png)
+
+[Windows环境下通过IDEA生成镜像到本地Docker](https://www.cnblogs.com/hierarchy/articles/11908677.html)
 
 ### 配置
 
