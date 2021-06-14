@@ -503,7 +503,7 @@ Wrapper  条件构造抽象类
 [Redis可视化客户端汇总](https://blog.csdn.net/u012723183/article/details/103409820)
 [AnotherRedisDesktopManager download](https://github.com/qishibo/AnotherRedisDesktopManager/releases)
 
-#####   
+#####    
 
 pom.xml
 
@@ -678,6 +678,7 @@ public RedisCacheManager redisCacheManager(RedisTemplate redisTemplate){
 ```
 
 2. 本地在pom.xml同层 创建配置Dockerfile
+
 ```dockerfile
 FROM openjdk:8-jdk-alpine
 ARG JAR_FILE=target/hong-demo.jar
@@ -685,20 +686,93 @@ COPY ${JAR_FILE} app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
 EXPOSE 8888
 ```
+
 dockerfile编写可参考[Spring Boot with Docker](https://spring.io/guides/gs/spring-boot-docker/)
 
 3. 在idea中配置仓库地址
-![docker仓库配置](./images/dockerfile.png)
-参考[idea中安装docker插件](https://www.jianshu.com/p/b79b555e9bce)
+   ![docker仓库配置](./images/dockerfile.png)
+   参考[idea中安装docker插件](https://www.jianshu.com/p/b79b555e9bce)
 
 4. 新建docker配置
-![docker配置](./images/docker-configiration.png)
+   ![docker配置](./images/docker-configiration.png)
    这里可以参考[idea+springboot+dockerfile](https://www.jianshu.com/p/afab984bb3d9)
 
 5. 运行 验证
-![成功访问](./images/docker-success.png)
+   ![成功访问](./images/docker-success.png)
 
 [Windows环境下通过IDEA生成镜像到本地Docker](https://www.cnblogs.com/hierarchy/articles/11908677.html)
+
+#### 集成rabbitmq
+
+1. 首先你得有个rabbitmq 可以本地安装 也可以在docker上安装 这都随你
+
+2. 加入你rabbitmq的starter
+
+```xml
+<!-- RabbitMQ;)-->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-amqp</artifactId>
+</dependency>
+<!-- RabbitMQ:~ -->
+```
+
+3. 配置你的rabbitmq信息
+```properties
+# rabbitmq相关配置
+spring.rabbitmq.host=127.0.0.1
+spring.rabbitmq.port=5672
+spring.rabbitmq.username=xxx
+spring.rabbitmq.password=xxx
+```
+
+4. 配置rabbitmq队列
+```java
+/**
+ * rabbitmq 配置队列
+ */
+@Configuration
+public class RabbitConfig {
+
+    /**
+     * 定义一个名为：hong 的队列
+     * @return org.springframework.amqp.core.Queue
+     */
+    @Bean
+    public Queue hongQueue() {
+        return new Queue("hong");
+    }
+}
+```
+
+5. 配置队列处理
+```java
+/**
+ * 消息队列处理
+ */
+@Component
+@RabbitListener(queues = "hong")
+public class Consumer {
+
+    Logger log = LoggerFactory.getLogger(Consumer.class);
+    /**
+     * @RabbitHandler 指定消息的处理方法
+     * @param message
+     */
+    @RabbitHandler
+    public void process(String message) {
+        log.info("接收的消息为: {}", message);
+    }
+}
+```
+
+6. 启动验证
+> http://127.0.0.1:9000/rabbit/hello?msg=hello,rabbitmq
+
+> {"msg":"hello,rabbitmq已发送","code":"200"}
+
+![rabbit-message-rate](./images/rabbit-message-rate.png)
+![rabbit-success-log](./images/rabbit-success-log.png)
 
 ### 配置
 

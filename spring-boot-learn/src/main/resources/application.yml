@@ -81,3 +81,5 @@ mybatis-plus:
 
 swagger:
   enabled: true
+server:
+  port: 9000
