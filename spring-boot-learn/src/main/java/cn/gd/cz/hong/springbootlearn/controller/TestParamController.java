@@ -1,8 +1,6 @@
 package cn.gd.cz.hong.springbootlearn.controller;
 
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +11,14 @@ import java.util.Map;
 @RestController
 @RequestMapping("/test/param")
 public class TestParamController {
+
+    @GetMapping("/get/complex")
+    public Map<String, String> get(@RequestBody Map<String, String> param) {
+        return new HashMap<String, String>() {{
+            put("code", "200");
+            putAll(param);
+        }};
+    }
 
     /**
      * req
@@ -56,6 +62,22 @@ public class TestParamController {
      */
     @RequestMapping("/post/complex")
     public Map<String, String> complex(@RequestBody Map<String, String> param) {
+        return new HashMap<String, String>() {{
+            put("code", "200");
+            putAll(param);
+        }};
+    }
+
+    @DeleteMapping("/delete/complex")
+    public Map<String, String> delete(@RequestBody Map<String, String> param) {
+        return new HashMap<String, String>() {{
+            put("code", "200");
+            putAll(param);
+        }};
+    }
+
+    @PutMapping("/put/complex")
+    public Map<String, String> put(@RequestBody Map<String, String> param) {
         return new HashMap<String, String>() {{
             put("code", "200");
             putAll(param);
