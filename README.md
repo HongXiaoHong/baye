@@ -995,6 +995,35 @@ public class FileUploadController {
 ![文件上传成功](./images/file-upload-success.png)
 ![文件上传成功](./images/file-upload-postman-request-response.png)
 
+###### 文件下载
+确保引入 web starter
+使用ResponseEntity方式进行下载
+```java
+@GetMapping("/download")
+    public ResponseEntity<InputStreamResource> downloadFile(Long id)
+            throws IOException {
+        String filePath = "D:\\documents\\photo\\secondary\\20200405/" + id + ".jpg";
+        FileSystemResource file = new FileSystemResource(filePath);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", file.getFilename()));
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentLength(file.contentLength())
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .body(new InputStreamResource(file.getInputStream()));
+    }
+```
+
+test 
+> http://localhost:9000/download?id=1
+
+完美下载图片一张
+
 ### 配置
 
 #### 自定义配置生成元数据
