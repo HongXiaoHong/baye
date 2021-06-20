@@ -946,6 +946,54 @@ public class ThymeleafController {
 </html>
 ```
 
+##### 文件上传下载接口
+###### 文件上传
+首先确保你引入了 web starter
+配置文件上传大小限制
+```properties
+# 文件上传配置
+# 最大支持文件大小 即单个文件大小 这里的单位是bytes 下面是5M
+spring.servlet.multipart.max-file-size=5242880
+# 最大支持请求大小 即一次性上传的总文件大小 这里的单位是bytes 下面是10M
+spring.servlet.multipart.max-request-size=10485760
+```
+
+编写控制层传文件
+```java
+@RestController
+public class FileUploadController {
+    private static final Logger log =
+            LoggerFactory.getLogger(FileUploadController.class);
+
+    @PostMapping("/upload")
+    public String upload(@RequestParam MultipartFile file) throws IllegalStateException, IOException {
+        // 判断是否为空文件
+        if (file.isEmpty()) {
+            return "上传文件不能为空";
+        }
+        // 文件类型
+        String contentType = file.getContentType();
+        // springmvc处理后的文件名
+        String fileName = file.getName();
+        log.info("服务器文件名：" + fileName);
+        // 原文件名即上传的文件名
+        String origFileName = file.getOriginalFilename();
+        // 文件大小
+        Long fileSize = file.getSize();
+
+        // 保存文件
+        // 可以使用二进制流直接保存
+        // 这里直接使用transferTo
+        file.transferTo(new File("D:\\temp\\download\\", origFileName));
+
+        return String.format(file.getClass().getName() + "方式文件上传成功！\n文件名:%s,文件类型:%s,文件大小:%s", origFileName, contentType,fileSize);
+
+    }
+}
+```
+
+![文件上传成功](./images/file-upload-success.png)
+![文件上传成功](./images/file-upload-postman-request-response.png)
 
 ### 配置
 
