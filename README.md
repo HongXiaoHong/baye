@@ -503,7 +503,7 @@ Wrapper  条件构造抽象类
 [Redis可视化客户端汇总](https://blog.csdn.net/u012723183/article/details/103409820)
 [AnotherRedisDesktopManager download](https://github.com/qishibo/AnotherRedisDesktopManager/releases)
 
-#####    
+#####      
 
 pom.xml
 
@@ -714,10 +714,11 @@ dockerfile编写可参考[Spring Boot with Docker](https://spring.io/guides/gs/s
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-amqp</artifactId>
 </dependency>
-<!-- RabbitMQ:~ -->
+        <!-- RabbitMQ:~ -->
 ```
 
 3. 配置你的rabbitmq信息
+
 ```properties
 # rabbitmq相关配置
 spring.rabbitmq.host=127.0.0.1
@@ -727,6 +728,7 @@ spring.rabbitmq.password=xxx
 ```
 
 4. 配置rabbitmq队列
+
 ```java
 /**
  * rabbitmq 配置队列
@@ -746,6 +748,7 @@ public class RabbitConfig {
 ```
 
 5. 配置队列处理
+
 ```java
 /**
  * 消息队列处理
@@ -755,6 +758,7 @@ public class RabbitConfig {
 public class Consumer {
 
     Logger log = LoggerFactory.getLogger(Consumer.class);
+
     /**
      * @RabbitHandler 指定消息的处理方法
      * @param message
@@ -767,6 +771,7 @@ public class Consumer {
 ```
 
 6. 启动验证
+
 > http://127.0.0.1:9000/rabbit/hello?msg=hello,rabbitmq
 
 > {"msg":"hello,rabbitmq已发送","code":"200"}
@@ -775,29 +780,35 @@ public class Consumer {
 ![rabbit-success-log](./images/rabbit-success-log.png)
 
 #### 单元测试
+
 引入 spring-boot-starter-test
+
 ```xml
+
 <dependency>
-   <groupId>org.springframework.boot</groupId>
-   <artifactId>spring-boot-starter-test</artifactId>
-   <scope>test</scope>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <scope>test</scope>
 </dependency>
 ```
 
 启动springboot 容器测试
+
 ```java
+
 @SpringBootTest
 class SpringBootLearnApplicationTests {
 
-	@Test
-	void contextLoads() {
-		System.out.println("contextLoadsd");
-	}
+    @Test
+    void contextLoads() {
+        System.out.println("contextLoadsd");
+    }
 
 }
 ```
 
 启动springboot容器 并且调用接口测试
+
 ```java
 package cn.gd.cz.hong.springbootlearn.controller;
 
@@ -839,6 +850,7 @@ class TestParamControllerTest {
     public void beforeSetUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(wc).build();
     }
+
     @Test
     void simple() throws Exception {
         String id = "344698773532";
@@ -855,6 +867,85 @@ class TestParamControllerTest {
 ```
 
 参考 [SpringBoot基础之MockMvc单元测试](https://hello.blog.csdn.net/article/details/88983708?utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-3.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-3.control)
+
+#### 集成thymeleaf
+
+增加依赖
+
+```xml
+<!-- thymeleaf:> -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-thymeleaf</artifactId>
+</dependency>
+<!-- thymeleaf:~ -->
+```
+增加thymeleaf配置
+```properties
+# thymeleaf 配置
+# 启用缓存:建议生产开启
+spring.thymeleaf.cache=false
+# 建议模版是否存在
+spring.thymeleaf.check-template-location=true
+# Content-Type 值
+spring.thymeleaf.servlet.content-type=text/html
+# 是否启用
+spring.thymeleaf.enabled=true
+# 模版编码
+spring.thymeleaf.encoding=UTF-8
+# 应该从解析中排除的视图名称列表（用逗号分隔）
+spring.thymeleaf.excluded-view-names=
+# 模版模式
+spring.thymeleaf.mode=HTML
+# 模版存放路径
+spring.thymeleaf.prefix=classpath:/templates/
+# 模版后缀
+spring.thymeleaf.suffix=.html
+```
+
+访问层增加代码
+```java
+@Controller
+@RequestMapping("/thymeleaf")
+public class ThymeleafController {
+
+   // 正常和springmvc设置返回参数是意义的用法了
+   @GetMapping("/map")
+   public String index(String name, ModelMap map) {
+      map.addAttribute("name", name);
+      map.addAttribute("from", "spring-boot-learn");
+      // 模版名称，实际的目录为：src/main/resources/templates/thymeleaf.html
+      return "thymeleaf";
+   }
+
+   @GetMapping("/mv")
+   public ModelAndView index(String name) {
+      ModelAndView mv = new ModelAndView();
+      mv.addObject("name", name);
+      mv.addObject("from", "spring-boot-learn");
+      // 模版名称，实际的目录为：src/main/resources/templates/thymeleaf.html
+      mv.setViewName("thymeleaf");
+      return mv;
+   }
+}
+```
+
+在resource/templates目录下新增一个thymeleaf.html页面
+```html
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8" />
+    <title>thymeleaf简单示例</title>
+</head>
+<body>
+<h1>Hello thymeleaf</h1>
+<!-- 这里注意：拼接时 变量要单独使用${param}，其他的常量使用''包裹 -->
+<h2 th:text="'名称：'+${name}+'，来自：'+${from}">默认值</h2>
+</body>
+</html>
+```
+
 
 ### 配置
 
