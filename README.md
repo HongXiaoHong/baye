@@ -1024,6 +1024,8 @@ test
 
 完美下载图片一张
 
+[Springboot文件下载](https://blog.csdn.net/qq415200973/article/details/51149234?utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Edefault-18.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Edefault-18.control)
+
 ### 配置
 
 #### 自定义配置生成元数据
