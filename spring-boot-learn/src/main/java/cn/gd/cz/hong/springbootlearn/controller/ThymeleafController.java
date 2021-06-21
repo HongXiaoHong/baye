@@ -31,4 +31,9 @@ public class ThymeleafController {
         mv.setViewName("thymeleaf");
         return mv;
     }
+
+    @GetMapping("/socket")
+    public String socket() {
+        return "websock";
+    }
 }

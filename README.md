@@ -1026,6 +1026,217 @@ test
 
 [Springboot文件下载](https://blog.csdn.net/qq415200973/article/details/51149234?utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Edefault-18.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Edefault-18.control)
 
+#### 集成websocket
+加入websocket starter
+不加上 配置情况下
+```javascript
+socket:18 WebSocket connection to 'ws://127.0.0.1:9000/my-chat/hong' failed: 
+linkWebsocket @ socket:18
+onclick @ socket:9
+```
+
+加了配置
+```java
+package cn.gd.cz.hong.springbootlearn.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
+
+/**
+ * WebSocket 配置
+ */
+@Configuration
+@EnableWebSocket
+public class WebSocketConfig {
+    /**
+     * 会自动注册使用了@ServerEndpoint注解声明的Websocket endpoint
+     * 要注意，如果使用独立的servlet容器，
+     * 而不是直接使用springboot的内置容器，
+     * 就不要注入ServerEndpointExporter，因为它将由容器自己提供和管理。
+     */
+    @Bean
+    public ServerEndpointExporter serverEndpointExporter() {
+        return new ServerEndpointExporter();
+    }
+}
+```
+
+加入控制层以及工具类代码
+```java
+package cn.gd.cz.hong.springbootlearn.controller;
+
+import cn.gd.cz.hong.springbootlearn.util.WebSocketUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import javax.websocket.*;
+import javax.websocket.server.PathParam;
+import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
+
+/**
+ * websocket 简易聊天
+ * @author hong
+ *
+ */
+//由于是websocket 所以原本是@RestController的http形式
+//直接替换成@ServerEndpoint即可，作用是一样的 就是指定一个地址
+//表示定义一个websocket的Server端
+@Component
+@ServerEndpoint(value = "/my-chat/{usernick}")
+public class WebSocketController {
+
+    private static final Logger log =
+            LoggerFactory.getLogger(WebSocketController.class);
+    /**
+     * 连接事件 加入注解
+     * @param session
+     */
+    @OnOpen
+    public void onOpen(@PathParam(value = "usernick") String userNick, Session session) {
+        String message = "有新游客[" + userNick + "]加入聊天室!";
+        log.info(message);
+        WebSocketUtil.addSession(userNick, session);
+        //此时可向所有的在线通知 某某某登录了聊天室
+        WebSocketUtil.sendMessageForAll(message);
+    }
+
+    @OnClose
+    public void onClose(@PathParam(value = "usernick") String userNick,Session session) {
+        String message = "游客[" + userNick + "]退出聊天室!";
+        log.info(message);
+        WebSocketUtil.remoteSession(userNick);
+        //此时可向所有的在线通知 某某某登录了聊天室
+        WebSocketUtil.sendMessageForAll(message);
+    }
+
+    @OnMessage
+    public void OnMessage(@PathParam(value = "usernick") String userNick, String message) {
+        //类似群发
+        String info = "游客[" + userNick + "]：" + message;
+        log.info(info);
+        WebSocketUtil.sendMessageForAll(message);
+    }
+
+    @OnError
+    public void onError(Session session, Throwable throwable) {
+        log.error("异常:", throwable);
+        try {
+            session.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        throwable.printStackTrace();
+    }
+
+}
+```
+
+工具类
+```java
+package cn.gd.cz.hong.springbootlearn.util;
+
+import javax.websocket.RemoteEndpoint;
+import javax.websocket.Session;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ *
+ */
+public class WebSocketUtil {
+
+    /**
+     * 简单使用map进行存储在线的session
+     *
+     */
+    private static final Map<String, Session> ONLINE_SESSION = new ConcurrentHashMap<>();
+
+    public static void addSession(String userNick,Session session) {
+        //putIfAbsent 添加键—值对的时候，先判断该键值对是否已经存在
+        //不存在：新增，并返回null
+        //存在：不覆盖，直接返回已存在的值
+//    	ONLINE_SESSION.putIfAbsent(userNick, session);
+        //简单示例 不考虑复杂情况。。怎么简单怎么来了。。
+        ONLINE_SESSION.put(userNick, session);
+    }
+
+    public static void remoteSession(String userNick) {
+        ONLINE_SESSION.remove(userNick);
+    }
+
+    /**
+     * 向某个用户发送消息
+     * @param session 某一用户的session对象
+     * @param message
+     */
+    public static void sendMessage(Session session, String message) {
+        if(session == null) {
+            return;
+        }
+        // getAsyncRemote()和getBasicRemote()异步与同步
+        RemoteEndpoint.Async async = session.getAsyncRemote();
+        //发送消息
+        async.sendText(message);
+    }
+
+    /**
+     * 向所有在线人发送消息
+     * @param message
+     */
+    public static void sendMessageForAll(String message) {
+        //jdk8 新方法
+        ONLINE_SESSION.forEach((sessionId, session) -> sendMessage(session, message));
+    }
+}
+```
+
+##### 验证
+
+新建一个页面
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>websocket测试</title>
+</head>
+<body>
+<label for="url">url</label><input type="text" id="url" name="url">
+    <button type="button" onclick="linkWebsocket()">连接</button>
+    <button type="button" onclick="closeWebsocket()">关闭</button>
+    <button type="button" onclick="sendSomething()">发送</button>
+</body>
+<script>
+    let socket;
+
+    function linkWebsocket() {
+        let url = document.getElementById("url").value;
+        socket = new WebSocket(url);
+    }
+    function closeWebsocket() {
+        socket.close();
+    }
+    function sendSomething() {
+        socket.send("hello")
+    }
+</script>
+</html>
+```
+
+点击 连接 退出 连接 发送 退出
+有如下日志
+```text
+有新游客[hong]加入聊天室!
+ 游客[hong]退出聊天室!
+有新游客[hong]加入聊天室!
+游客[hong]：hello
+游客[hong]退出聊天室!
+```
+
 ### 配置
 
 #### 自定义配置生成元数据

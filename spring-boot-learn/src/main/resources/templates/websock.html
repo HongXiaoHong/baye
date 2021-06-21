@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>websocket测试</title>
+</head>
+<body>
+<label for="url">url</label><input id="url" name="url" type="text">
+<button onclick="linkWebsocket()" type="button">连接</button>
+<button onclick="closeWebsocket()" type="button">关闭</button>
+<button onclick="sendSomething()" type="button">发送</button>
+</body>
+<script>
+    let socket;
+
+    function linkWebsocket() {
+        let url = document.getElementById("url").value;
+        socket = new WebSocket(url);
+    }
+
+    function closeWebsocket() {
+        socket.close();
+    }
+
+    function sendSomething() {
+        socket.send("hello")
+    }
+</script>
+</html>
