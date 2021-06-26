@@ -1,16 +1,22 @@
 package cn.gd.cz.hong.springbootlearn.controller;
 
+import cn.gd.cz.hong.springbootlearn.service.AsyncService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncEvent;
 import javax.servlet.AsyncListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 异步测试
@@ -25,6 +31,9 @@ public class AsyncController {
 
     private static final Logger LOGGER =
             LoggerFactory.getLogger(AsyncController.class);
+
+    @Autowired
+    private AsyncService asyncService;
 
     @RequestMapping("/req")
     public void req(HttpServletRequest request,
@@ -68,5 +77,16 @@ public class AsyncController {
         asyncContext.complete();
         //此时之类 request的线程连接已经释放了
         LOGGER.info("线程：" + Thread.currentThread().getName());
+    }
+
+    @ResponseBody
+    @RequestMapping("/invoke")
+    public Map<String, String> invoke() {
+        LOGGER.info("here is controller ：" + Thread.currentThread().getName());
+        asyncService.invoke();
+        return new HashMap<String, String>() {{
+            put("code", "200");
+            put("message", "success");
+        }};
     }
 }

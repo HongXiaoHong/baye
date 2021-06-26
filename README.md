@@ -503,7 +503,7 @@ Wrapper  条件构造抽象类
 [Redis可视化客户端汇总](https://blog.csdn.net/u012723183/article/details/103409820)
 [AnotherRedisDesktopManager download](https://github.com/qishibo/AnotherRedisDesktopManager/releases)
 
-#####      
+#####       
 
 pom.xml
 
@@ -878,9 +878,11 @@ class TestParamControllerTest {
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-thymeleaf</artifactId>
 </dependency>
-<!-- thymeleaf:~ -->
+        <!-- thymeleaf:~ -->
 ```
+
 增加thymeleaf配置
+
 ```properties
 # thymeleaf 配置
 # 启用缓存:建议生产开启
@@ -904,38 +906,41 @@ spring.thymeleaf.suffix=.html
 ```
 
 访问层增加代码
+
 ```java
+
 @Controller
 @RequestMapping("/thymeleaf")
 public class ThymeleafController {
 
-   // 正常和springmvc设置返回参数是意义的用法了
-   @GetMapping("/map")
-   public String index(String name, ModelMap map) {
-      map.addAttribute("name", name);
-      map.addAttribute("from", "spring-boot-learn");
-      // 模版名称，实际的目录为：src/main/resources/templates/thymeleaf.html
-      return "thymeleaf";
-   }
+    // 正常和springmvc设置返回参数是意义的用法了
+    @GetMapping("/map")
+    public String index(String name, ModelMap map) {
+        map.addAttribute("name", name);
+        map.addAttribute("from", "spring-boot-learn");
+        // 模版名称，实际的目录为：src/main/resources/templates/thymeleaf.html
+        return "thymeleaf";
+    }
 
-   @GetMapping("/mv")
-   public ModelAndView index(String name) {
-      ModelAndView mv = new ModelAndView();
-      mv.addObject("name", name);
-      mv.addObject("from", "spring-boot-learn");
-      // 模版名称，实际的目录为：src/main/resources/templates/thymeleaf.html
-      mv.setViewName("thymeleaf");
-      return mv;
-   }
+    @GetMapping("/mv")
+    public ModelAndView index(String name) {
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("name", name);
+        mv.addObject("from", "spring-boot-learn");
+        // 模版名称，实际的目录为：src/main/resources/templates/thymeleaf.html
+        mv.setViewName("thymeleaf");
+        return mv;
+    }
 }
 ```
 
 在resource/templates目录下新增一个thymeleaf.html页面
+
 ```html
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title>thymeleaf简单示例</title>
 </head>
 <body>
@@ -947,9 +952,11 @@ public class ThymeleafController {
 ```
 
 ##### 文件上传下载接口
+
 ###### 文件上传
-首先确保你引入了 web starter
-配置文件上传大小限制
+
+首先确保你引入了 web starter 配置文件上传大小限制
+
 ```properties
 # 文件上传配置
 # 最大支持文件大小 即单个文件大小 这里的单位是bytes 下面是5M
@@ -959,7 +966,9 @@ spring.servlet.multipart.max-request-size=10485760
 ```
 
 编写控制层传文件
+
 ```java
+
 @RestController
 public class FileUploadController {
     private static final Logger log =
@@ -986,7 +995,7 @@ public class FileUploadController {
         // 这里直接使用transferTo
         file.transferTo(new File("D:\\temp\\download\\", origFileName));
 
-        return String.format(file.getClass().getName() + "方式文件上传成功！\n文件名:%s,文件类型:%s,文件大小:%s", origFileName, contentType,fileSize);
+        return String.format(file.getClass().getName() + "方式文件上传成功！\n文件名:%s,文件类型:%s,文件大小:%s", origFileName, contentType, fileSize);
 
     }
 }
@@ -996,30 +1005,31 @@ public class FileUploadController {
 ![文件上传成功](./images/file-upload-postman-request-response.png)
 
 ###### 文件下载
-确保引入 web starter
-使用ResponseEntity方式进行下载
+
+确保引入 web starter 使用ResponseEntity方式进行下载
+
 ```java
 @GetMapping("/download")
-    public ResponseEntity<InputStreamResource> downloadFile(Long id)
-            throws IOException {
-        String filePath = "D:\\documents\\photo\\secondary\\20200405/" + id + ".jpg";
-        FileSystemResource file = new FileSystemResource(filePath);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-        headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", file.getFilename()));
-        headers.add("Pragma", "no-cache");
-        headers.add("Expires", "0");
+public ResponseEntity<InputStreamResource> downloadFile(Long id)
+        throws IOException{
+        String filePath="D:\\documents\\photo\\secondary\\20200405/"+id+".jpg";
+        FileSystemResource file=new FileSystemResource(filePath);
+        HttpHeaders headers=new HttpHeaders();
+        headers.add("Cache-Control","no-cache, no-store, must-revalidate");
+        headers.add("Content-Disposition",String.format("attachment; filename=\"%s\"",file.getFilename()));
+        headers.add("Pragma","no-cache");
+        headers.add("Expires","0");
 
         return ResponseEntity
-                .ok()
-                .headers(headers)
-                .contentLength(file.contentLength())
-                .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .body(new InputStreamResource(file.getInputStream()));
-    }
+        .ok()
+        .headers(headers)
+        .contentLength(file.contentLength())
+        .contentType(MediaType.parseMediaType("application/octet-stream"))
+        .body(new InputStreamResource(file.getInputStream()));
+        }
 ```
 
-test 
+test
 > http://localhost:9000/download?id=1
 
 完美下载图片一张
@@ -1027,15 +1037,26 @@ test
 [Springboot文件下载](https://blog.csdn.net/qq415200973/article/details/51149234?utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Edefault-18.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Edefault-18.control)
 
 #### 集成websocket
-加入websocket starter
-不加上 配置情况下
+
+加入websocket starter 不加上 配置情况下
+
 ```javascript
-socket:18 WebSocket connection to 'ws://127.0.0.1:9000/my-chat/hong' failed: 
-linkWebsocket @ socket:18
-onclick @ socket:9
+socket:18
+WebSocket
+connection
+to
+'ws://127.0.0.1:9000/my-chat/hong'
+failed:
+    linkWebsocket
+@ socket:
+18
+onclick
+@ socket:
+9
 ```
 
 加了配置
+
 ```java
 package cn.gd.cz.hong.springbootlearn.config;
 
@@ -1064,6 +1085,7 @@ public class WebSocketConfig {
 ```
 
 加入控制层以及工具类代码
+
 ```java
 package cn.gd.cz.hong.springbootlearn.controller;
 
@@ -1091,6 +1113,7 @@ public class WebSocketController {
 
     private static final Logger log =
             LoggerFactory.getLogger(WebSocketController.class);
+
     /**
      * 连接事件 加入注解
      * @param session
@@ -1105,7 +1128,7 @@ public class WebSocketController {
     }
 
     @OnClose
-    public void onClose(@PathParam(value = "usernick") String userNick,Session session) {
+    public void onClose(@PathParam(value = "usernick") String userNick, Session session) {
         String message = "游客[" + userNick + "]退出聊天室!";
         log.info(message);
         WebSocketUtil.remoteSession(userNick);
@@ -1136,6 +1159,7 @@ public class WebSocketController {
 ```
 
 工具类
+
 ```java
 package cn.gd.cz.hong.springbootlearn.util;
 
@@ -1155,7 +1179,7 @@ public class WebSocketUtil {
      */
     private static final Map<String, Session> ONLINE_SESSION = new ConcurrentHashMap<>();
 
-    public static void addSession(String userNick,Session session) {
+    public static void addSession(String userNick, Session session) {
         //putIfAbsent 添加键—值对的时候，先判断该键值对是否已经存在
         //不存在：新增，并返回null
         //存在：不覆盖，直接返回已存在的值
@@ -1174,7 +1198,7 @@ public class WebSocketUtil {
      * @param message
      */
     public static void sendMessage(Session session, String message) {
-        if(session == null) {
+        if (session == null) {
             return;
         }
         // getAsyncRemote()和getBasicRemote()异步与同步
@@ -1197,6 +1221,7 @@ public class WebSocketUtil {
 ##### 验证
 
 新建一个页面
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -1206,9 +1231,9 @@ public class WebSocketUtil {
 </head>
 <body>
 <label for="url">url</label><input type="text" id="url" name="url">
-    <button type="button" onclick="linkWebsocket()">连接</button>
-    <button type="button" onclick="closeWebsocket()">关闭</button>
-    <button type="button" onclick="sendSomething()">发送</button>
+<button type="button" onclick="linkWebsocket()">连接</button>
+<button type="button" onclick="closeWebsocket()">关闭</button>
+<button type="button" onclick="sendSomething()">发送</button>
 </body>
 <script>
     let socket;
@@ -1217,9 +1242,11 @@ public class WebSocketUtil {
         let url = document.getElementById("url").value;
         socket = new WebSocket(url);
     }
+
     function closeWebsocket() {
         socket.close();
     }
+
     function sendSomething() {
         socket.send("hello")
     }
@@ -1227,8 +1254,8 @@ public class WebSocketUtil {
 </html>
 ```
 
-点击 连接 退出 连接 发送 退出
-有如下日志
+点击 连接 退出 连接 发送 退出 有如下日志
+
 ```text
 有新游客[hong]加入聊天室!
  游客[hong]退出聊天室!
@@ -1238,15 +1265,15 @@ public class WebSocketUtil {
 ```
 
 #### 异步
+
 ##### 异步请求
-同步请求：同一个请求由一个线程从头到尾进行处理 一步到位
-异步请求：同一个请求中由多个线程进行处理 处理的线程先释放资源 之后通过回调机制处理
 
-场景 红烧猪蹄 ：
-高压锅压猪脚那么费时间、这个时候我们可以去做其他事情 等到猪蹄压好了再继续烹饪
+同步请求：同一个请求由一个线程从头到尾进行处理 一步到位 异步请求：同一个请求中由多个线程进行处理 处理的线程先释放资源 之后通过回调机制处理
 
-如果是直接拿锅煮 不仅费时还要经常搅动 查看是否熟透 浪费时间又耗时
-这个时候没有反馈机制 只能自己照看 就很麻烦
+场景 红烧猪蹄 ： 高压锅压猪脚那么费时间、这个时候我们可以去做其他事情 等到猪蹄压好了再继续烹饪
+
+如果是直接拿锅煮 不仅费时还要经常搅动 查看是否熟透 浪费时间又耗时 这个时候没有反馈机制 只能自己照看 就很麻烦
+
 ```mermaid
 sequenceDiagram
 	红烧猪蹄->>准备猪脚香料: 开始
@@ -1257,10 +1284,169 @@ sequenceDiagram
 
 怎么搞
 
+```java
+package cn.gd.cz.hong.springbootlearn.controller;
 
-代码中的实现
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.AsyncContext;
+import javax.servlet.AsyncEvent;
+import javax.servlet.AsyncListener;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+/**
+ * 异步测试
+ * 直接使用request.getAsyncContext()是不行的
+ * java.lang.IllegalStateException: It is illegal to call this method if the current request is not in asynchronous mode (i.e. isAsyncStarted() returns false)
+ * <p>
+ * 不配置@WebServlet(urlPatterns = "/async", asyncSupported = true)也是可以的
+ */
+@Controller
+@RequestMapping("/async")
+public class AsyncController {
+
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(AsyncController.class);
+
+    @RequestMapping("/req")
+    public void req(HttpServletRequest request,
+                    HttpServletResponse response) {
+        AsyncContext asyncContext = request.startAsync();
+        asyncContext.addListener(new AsyncListener() {
+            @Override
+            public void onComplete(AsyncEvent asyncEvent) throws IOException {
+                LOGGER.info("complete");
+            }
+
+            @Override
+            public void onTimeout(AsyncEvent asyncEvent) throws IOException {
+                LOGGER.info("timeout");
+            }
+
+            @Override
+            public void onError(AsyncEvent asyncEvent) throws IOException {
+                LOGGER.info("error");
+            }
+
+            @Override
+            public void onStartAsync(AsyncEvent asyncEvent) throws IOException {
+                LOGGER.info("start");
+            }
+        });
+        //设置超时时间
+        asyncContext.setTimeout(200);
+        try {
+            Thread.sleep(100);
+            LOGGER.info("内部线程：" + Thread.currentThread().getName());
+            asyncContext.getResponse().setCharacterEncoding("utf-8");
+            asyncContext.getResponse().setContentType("text/html;charset=UTF-8");
+            asyncContext.getResponse().getWriter().println("这是【异步】的请求返回");
+        } catch (Exception e) {
+            LOGGER.error("异常：", e);
+        }
+        //异步请求完成通知
+        //此时整个请求才完成
+        //其实可以利用此特性 进行多条消息的推送 把连接挂起。。
+        asyncContext.complete();
+        //此时之类 request的线程连接已经释放了
+        LOGGER.info("线程：" + Thread.currentThread().getName());
+    }
+}
+```
+
+主要是加一个Listener的回调 还有就是记得调用 asyncContext.complete()
+不然异步方法不会结束
+
+结果
+![异步请求success](./images/异步请求success.jpg)
+还有spring自带的异步请求方式 但需要spring5+ 这里不做赘述 有兴趣可参见
+[异步请求](https://blog.lqdev.cn/2018/08/16/springboot/chapter-twenty/#%E4%BD%95%E4%B8%BA%E5%BC%82%E6%AD%A5%E8%AF%B7%E6%B1%82)
+
+这篇文章中提到 有一个@WebServlet 可参见[Servlet中@WebServlet的作用](https://blog.csdn.net/qq_43520814/article/details/89223393)
 
 ##### 异步调用
+
+前言 同步调用： 代码一步一步顺序执行 异步调用： 代码可在不返回的情况执行下一步
+
+奇思妙想： 异步调用=在《让子弹飞》中，张麻子打枪 那不得让子弹飞一会儿呀
+
+配置让异步生效
+
+```java
+package cn.gd.cz.hong.springbootlearn.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import java.util.concurrent.ThreadPoolExecutor;
+
+/**
+ * 异步调用配置
+ * EnableAsync 允许在调用方法的时候使用异步
+ * 这里先试一下 没有配置直接调用是个什么情况
+ * 没有配置前 使用的是同一个进程
+ * 21:19:13.694 [http-nio-9000-exec-1] [INFO ] cn.gd.cz.hong.springbootlearn.controller.AsyncController:85 --- here is controller ：http-nio-9000-exec-1
+ * 21:19:13.694 [http-nio-9000-exec-1] [INFO ] cn.gd.cz.hong.springbootlearn.service.impl.AsyncServiceImpl:19 --- here is async: http-nio-9000-exec-1
+ *
+ * 配置了之后 便是用了两个进程进行处理
+ * 21:20:47.055 [http-nio-9000-exec-1] [INFO ] cn.gd.cz.hong.springbootlearn.controller.AsyncController:85 --- here is controller ：http-nio-9000-exec-1
+ * 21:20:47.057 [task-1] [INFO ] cn.gd.cz.hong.springbootlearn.service.impl.AsyncServiceImpl:19 --- here is async: task-1
+ *
+ * 第二次就是
+ * 21:23:03.791 [http-nio-9000-exec-4] [INFO ] cn.gd.cz.hong.springbootlearn.controller.AsyncController:85 --- here is controller ：http-nio-9000-exec-4
+ * 21:23:03.792 [task-2] [INFO ] cn.gd.cz.hong.springbootlearn.service.impl.AsyncServiceImpl:19 --- here is async: task-2
+ *
+ * 看到这里进程已经变为2 也就是没有复用 每一次都是新建一个进程给我用
+ *
+ * 这里配置一个线程池给进程使用 看到线程已经得到了复用 额~ 满意
+ * 21:29:47.620 [http-nio-9000-exec-10] [INFO ] cn.gd.cz.hong.springbootlearn.controller.AsyncController:85 --- here is controller ：http-nio-9000-exec-10
+ * 21:29:47.620 [hong-20] [INFO ] cn.gd.cz.hong.springbootlearn.service.impl.AsyncServiceImpl:19 --- here is async: hong-20
+ * 21:29:48.254 [http-nio-9000-exec-1] [INFO ] cn.gd.cz.hong.springbootlearn.controller.AsyncController:85 --- here is controller ：http-nio-9000-exec-1
+ * 21:29:48.254 [hong-1] [INFO ] cn.gd.cz.hong.springbootlearn.service.impl.AsyncServiceImpl:19 --- here is async: hong-1
+ *
+ * 回调
+ * 可以使用 Future
+ */
+@Configuration
+@EnableAsync
+public class AsyncConfig {
+
+    @Bean(name = "asyncPoolTaskExecutor")
+    public ThreadPoolTaskExecutor getAsyncThreadPoolTaskExecutor() {
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setCorePoolSize(20);
+        taskExecutor.setMaxPoolSize(200);
+        taskExecutor.setQueueCapacity(25);
+        taskExecutor.setKeepAliveSeconds(200);
+        taskExecutor.setThreadNamePrefix("hong-");
+        // 线程池对拒绝任务（无线程可用）的处理策略，目前只支持AbortPolicy、CallerRunsPolicy；默认为后者
+        taskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        //调度器shutdown被调用时等待当前被调度的任务完成
+        taskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+        //等待时长
+        taskExecutor.setAwaitTerminationSeconds(60);
+        taskExecutor.initialize();
+        return taskExecutor;
+    }
+}
+```
+
+直接调用带有注解@Async的方法即可
+
+```java
+@Async("asyncPoolTaskExecutor")
+@Override
+public void invoke(){
+        LOGGER.info("here is async: {}",Thread.currentThread().getName());
+        }
+```
 
 ### 配置
 
