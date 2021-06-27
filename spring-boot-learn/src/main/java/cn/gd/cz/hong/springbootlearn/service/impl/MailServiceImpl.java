@@ -14,13 +14,13 @@ import javax.annotation.Resource;
 @Service
 public class MailServiceImpl implements MailService {
 
-    @Resource
-    private JavaMailSender mailSender;
-
-    @PostConstruct
-    public void init() {
-        sendText("spring学习中");
-    }
+//    @Resource
+//    private JavaMailSender mailSender;
+//
+//    @PostConstruct
+//    public void init() {
+//        sendText("spring学习中");
+//    }
 
     @Override
     public void sendText(String content) {
@@ -29,6 +29,6 @@ public class MailServiceImpl implements MailService {
         message.setTo("m15220004896@163.com");
         message.setSubject("test");
         message.setText(content);
-        mailSender.send(message);
+//        mailSender.send(message);
     }
 }
