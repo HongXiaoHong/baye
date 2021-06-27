@@ -1564,6 +1564,8 @@ public class MailServiceImpl implements MailService {
 
 ```
 
+mail不仅可以发送文本 还可以发送附件 HTML 甚至可以用freemaker制作模板
+
 ### 配置
 
 #### 自定义配置生成元数据
