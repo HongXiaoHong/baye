@@ -505,7 +505,7 @@ Wrapper  条件构造抽象类
 [Redis可视化客户端汇总](https://blog.csdn.net/u012723183/article/details/103409820)
 [AnotherRedisDesktopManager download](https://github.com/qishibo/AnotherRedisDesktopManager/releases)
 
-#####        
+#####           
 
 pom.xml
 
@@ -1502,10 +1502,11 @@ public void invoke(){
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-mail</artifactId>
 </dependency>
-<!-- mail -->
+        <!-- mail -->
 ```
 
 配置发送邮箱信息
+
 ```properties
 ######################邮件相关##################
 # SMTP服务器地址
@@ -1525,6 +1526,7 @@ spring.mail.properties.mail.smtp.auth=true
 ```
 
 使用
+
 ```java
 package cn.gd.cz.hong.springbootlearn.service.impl;
 
@@ -1565,6 +1567,98 @@ public class MailServiceImpl implements MailService {
 ```
 
 mail不仅可以发送文本 还可以发送附件 HTML 甚至可以用freemaker制作模板
+
+#### 监控应用
+
+引入actuator
+
+```xml
+<!-- 监控应用 -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+        <!-- 监控应用 -->
+```
+
+因为一段Redis配置关系 这里启动的时候说连接不上Redis 但是我测试了下接口是没问题的
+![配置actuator了之后说连接不上Redis](./images/redis-config-actuator-fail-connect-to-redis.png)
+
+这里将Redis配置修改了一下 还是不行
+
+```yaml
+jedis:
+  pool:
+    max-active: 8 # 连接池最大连接数（使用负值表示没有限制）
+    max-idle: 8 # 连接池最大阻塞等待时间（使用负值表示没有限制）
+    max-wait: -1 # 连接池中的最大空闲连接
+    min-idle: 0 # 连接池中的最小空闲连接
+```
+
+修改成 还是不行
+
+```yaml
+lettuce:
+  pool:
+    max-active: 8 # 连接池最大连接数（使用负值表示没有限制）
+    max-idle: 8 # 连接池最大阻塞等待时间（使用负值表示没有限制）
+    max-wait: -1 # 连接池中的最大空闲连接
+    min-idle: 0 # 连接池中的最小空闲连接
+```
+
+然后把超时时间修改了下 timeout: 5000 # 连接超时时间（毫秒）
+
+访问 http://127.0.0.1:9180/actuator/health
+得
+
+```json
+{
+  "status": "UP",
+  "components": {
+    "db": {
+      "status": "UP",
+      "details": {
+        "database": "MySQL",
+        "validationQuery": "isValid()"
+      }
+    },
+    "diskSpace": {
+      "status": "UP",
+      "details": {
+        "total": 677543669760,
+        "free": 496228564992,
+        "threshold": 10485760,
+        "exists": true
+      }
+    },
+    "ping": {
+      "status": "UP"
+    },
+    "rabbit": {
+      "status": "UP",
+      "details": {
+        "version": "3.8.17"
+      }
+    },
+    "redis": {
+      "status": " UP",
+      "details": {
+        "version": "3.2.100"
+      }
+    }
+  }
+}
+```
+
+当然你可以自定端点
+可参[监控管理之Actuator使用](https://blog.lqdev.cn/2018/09/11/springboot/chapter-twenty-seven/)
+
+#### Spring Boot Admin
+上面说的actuator是接口 以json形式返回 这里的admin则是图形化给你展示出来 同样也是监控
+> Spring Boot Admin是一个针对spring-boot的actuator接口进行UI美化封装的监控工具。
+> 它可以：在列表中浏览所有被监控spring-boot项目的基本信息，
+> 详细的Health信息、内存信息、JVM信息、垃圾回收信息、各种配置信息（比如数据源、缓存列表和命中率）等，
+> 还可以直接修改logger的level
 
 ### 配置
 
