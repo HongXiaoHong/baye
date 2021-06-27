@@ -505,7 +505,7 @@ Wrapper  条件构造抽象类
 [Redis可视化客户端汇总](https://blog.csdn.net/u012723183/article/details/103409820)
 [AnotherRedisDesktopManager download](https://github.com/qishibo/AnotherRedisDesktopManager/releases)
 
-#####       
+#####        
 
 pom.xml
 
@@ -706,17 +706,15 @@ dockerfile编写可参考[Spring Boot with Docker](https://spring.io/guides/gs/s
 
 #### 集成rabbitmq
 
-1. 首先你得有个rabbitmq 可以本地安装 也可以在docker上安装 这都随你
-在docker上安装 rabbitmq
+1. 首先你得有个rabbitmq 可以本地安装 也可以在docker上安装 这都随你 在docker上安装 rabbitmq
+
 ```shell
 docker run -d --hostname rabbit-host --name rabbitmq -e RABBITMQ_DEFAULT_USER=hong -e RABBITMQ_DEFAULT_PASS=82576 -p 15672:15672 -p 9125:5672 rabbitmq:3-management
 ```
 
-如果你碰到端口占用的情况
-docker: Error response from daemon: Ports are not available: listen tcp 0.0.0.0:9001: bind: An attempt was made to access a socket in a way forbidden by its access permissions.
-可以先通过netsh interface ipv4 show excludedportrange protocol=tcp查看不允许你用的端口
-然后你换前面那个端口就可以了
-
+如果你碰到端口占用的情况 docker: Error response from daemon: Ports are not available: listen tcp 0.0.0.0:9001: bind: An attempt was
+made to access a socket in a way forbidden by its access permissions. 可以先通过netsh interface ipv4 show excludedportrange
+protocol=tcp查看不允许你用的端口 然后你换前面那个端口就可以了
 
 ```shell
 C:\WINDOWS\system32>netsh interface ipv4 show excludedportrange protocol=tcp
@@ -1492,6 +1490,78 @@ public class AsyncConfig {
 public void invoke(){
         LOGGER.info("here is async: {}",Thread.currentThread().getName());
         }
+```
+
+#### 集成mail
+
+引入jar包
+
+```xml
+<!-- mail -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-mail</artifactId>
+</dependency>
+<!-- mail -->
+```
+
+配置发送邮箱信息
+```properties
+######################邮件相关##################
+# SMTP服务器地址
+spring.mail.host=smtp.qq.com
+# SMTP服务器端口号 默认-1
+# spring.mail.port=-1
+# 发送方帐号
+spring.mail.username=1908711045@qq.com
+# 发送方密码（授权码）
+spring.mail.password=awpkocnlwuoddbdj
+#javaMailProperties 配置
+# 开启用户身份验证
+spring.mail.properties.mail.smtp.auth=true
+# STARTTLS：一种通信协议，具体可以搜索下
+#spring.mail.properties.mail.smtp.starttls.enable=true
+#spring.mail.properties.mail.smtp.starttls.required=true
+```
+
+使用
+```java
+package cn.gd.cz.hong.springbootlearn.service.impl;
+
+import cn.gd.cz.hong.springbootlearn.service.MailService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+
+/**
+ * 实现发送邮件
+ */
+@Service
+public class MailServiceImpl implements MailService {
+
+    @Resource
+    private JavaMailSender mailSender;
+
+    @PostConstruct
+    public void init() {
+        sendText("spring学习中");
+    }
+
+    @Override
+    public void sendText(String content) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("1908711045@qq.com");
+        message.setTo("m15220004896@163.com");
+        message.setSubject("test");
+        message.setText(content);
+        mailSender.send(message);
+    }
+}
+
 ```
 
 ### 配置

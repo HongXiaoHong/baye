@@ -156,6 +156,12 @@
 			<artifactId>spring-boot-devtools</artifactId>
 		</dependency>
 		<!-- devtool -->
+		<!-- mail -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<!-- mail -->
 		<!-- -->
 	</dependencies>
 
