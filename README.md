@@ -148,6 +148,8 @@ SLF4J: Actual binding is of type [ch.qos.logback.classic.util.ContextSelectorSta
 最后使用的日志框架参照
 ![sl4j框架转换-桥接模式](./images/sl4j-transfer-legacy.png)
 
+相关配置可查看 [使用 XML 进行配置](http://logging.apache.org/log4j/2.x/manual/configuration.html#XML)
+
 ##### 桥接模式
 
 主要思想： 将继承关系转化为组合关系
@@ -705,6 +707,50 @@ dockerfile编写可参考[Spring Boot with Docker](https://spring.io/guides/gs/s
 #### 集成rabbitmq
 
 1. 首先你得有个rabbitmq 可以本地安装 也可以在docker上安装 这都随你
+在docker上安装 rabbitmq
+```shell
+docker run -d --hostname rabbit-host --name rabbitmq -e RABBITMQ_DEFAULT_USER=hong -e RABBITMQ_DEFAULT_PASS=82576 -p 15672:15672 -p 9125:5672 rabbitmq:3-management
+```
+
+如果你碰到端口占用的情况
+docker: Error response from daemon: Ports are not available: listen tcp 0.0.0.0:9001: bind: An attempt was made to access a socket in a way forbidden by its access permissions.
+可以先通过netsh interface ipv4 show excludedportrange protocol=tcp查看不允许你用的端口
+然后你换前面那个端口就可以了
+
+
+```shell
+C:\WINDOWS\system32>netsh interface ipv4 show excludedportrange protocol=tcp
+
+协议 tcp 端口排除范围
+
+开始端口    结束端口
+----------    --------
+        80          80
+      1024        1123
+      1124        1223
+      1224        1323
+      1324        1423
+      1524        1623
+      1679        1778
+      1795        1894
+      4924        5023
+      5041        5140
+      5141        5240
+      5241        5340
+      5357        5357
+      5358        5457
+      5665        5764
+      5765        5864
+      8925        9024
+      9025        9124
+     50000       50059     *
+
+* - 管理的端口排除。
+
+
+C:\WINDOWS\system32>docker run -d --hostname rabbit-host --name rabbitmq -e RABBITMQ_DEFAULT_USER=hong -e RABBITMQ_DEFAULT_PASS=82576 -p 15672:15672 -p 9125:5672 rabbitmq:3-management
+52d3204fba5811234ac56fb7b158577a9983b8dd0fc6cc42756a9de4995afaf7
+```
 
 2. 加入你rabbitmq的starter
 
