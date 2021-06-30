@@ -1596,7 +1596,14 @@ jedis:
 ```
 
 修改成 还是不行
-
+修改成 lettuce方式会 Unable to connect to Redis; nested exception is io.lettuce.core.RedisConnectionException: 解决办法
+需要加入
+```xml
+<dependency>
+	 <groupId>org.apache.commons</groupId>
+	 <artifactId>commons-pool2</artifactId>
+</dependency>
+```
 ```yaml
 lettuce:
   pool:
@@ -1607,7 +1614,7 @@ lettuce:
 ```
 
 然后把超时时间修改了下 timeout: 5000 # 连接超时时间（毫秒）
-
+可参[Unable to connect to Redis; nested exception is io.lettuce.core.RedisConnectionException: 解决办法](https://blog.csdn.net/wwg18895736195/article/details/83628564)
 访问 http://127.0.0.1:9180/actuator/health
 得
 
