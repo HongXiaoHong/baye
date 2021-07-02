@@ -1,0 +1,6 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://hong:82576@127.0.0.1:27017/learning?authSource=admin
+server:
+  port: 9127
