@@ -1,0 +1,6 @@
+#third:
+#  party:
+#    baidu:
+#      url: "https://www.baidu.com"
+#      token: personal
+#      baseUrl: abc

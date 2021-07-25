@@ -19,5 +19,6 @@
         <module>spring-boot-druid-demo</module>
         <module>spring-boot-dynamic-datasource-demo</module>
         <module>spring-boot-thymeleaf-demo</module>
+        <module>spring-boot-configuration-processor-demo</module>
     </modules>
 </project>
