@@ -18,5 +18,6 @@
         <module>spring-boot-mongo-demo</module>
         <module>spring-boot-druid-demo</module>
         <module>spring-boot-dynamic-datasource-demo</module>
+        <module>spring-boot-thymeleaf-demo</module>
     </modules>
 </project>
