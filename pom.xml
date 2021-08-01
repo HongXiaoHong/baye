@@ -20,5 +20,6 @@
         <module>spring-boot-dynamic-datasource-demo</module>
         <module>spring-boot-thymeleaf-demo</module>
         <module>spring-boot-configuration-processor-demo</module>
+        <module>jasypt-spring-boot-starter-demo</module>
     </modules>
 </project>
