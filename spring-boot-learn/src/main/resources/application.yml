@@ -83,7 +83,7 @@ mybatis-plus:
 swagger:
   enabled: true
 server:
-  port: 9180
+  port: 10180
 management:
   endpoint:
     health:
