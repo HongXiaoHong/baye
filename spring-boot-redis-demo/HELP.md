@@ -1,5 +1,5 @@
 # spring-boot Redis demo
-
+学习链接： [【狂神说Java】Redis最新超详细版教程通俗易懂](https://www.bilibili.com/video/BV1S54y1R7SB)
 ### 连接腾讯云 Redis
 
 实验中使用的Redis 系腾讯云docker中部署的Redis 部署中需要注意的点
