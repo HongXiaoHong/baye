@@ -177,6 +177,180 @@ docker logs -f -t --since="2017-05-31" --tail=10 edu_web_1
 docker restart 容器ID或容器名
 ```
 
+#### 哨兵模式配置
+
+```bash
+docker run -p 26379:26379 --privileged=true --name redis_sentinel --net redis-network --ip 192.168.1.5 -v /home/docker/redis/sentinel/sentinel.conf:/config/redis/sentinel/sentinel.conf -d redis:latest redis-sentinel /config/redis/sentinel/sentinel.conf
+```
+
+docker run --name sentinel-26379 -v /root/docker-redis-sentinel1/conf/sentinel.conf:/etc/sentinel.conf -v
+/root/docker-redis-sentinel1/data:/data -p 26379:26379 -d redis redis-sentinel /etc/sentinel.conf
+
+sentinel 记得配置密码... 不配置密码 这里哨兵模式无法生效
+
+```bash
+sentinel auth-pass <master-group-name> <password>
+```
+
+启动sentinel 之后会出现
+
+```log
+1:X 09 Jan 2022 03:47:08.013 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+```
+
+[WARNING: The TCP backlog setting of 511.解决](https://www.cnblogs.com/faunjoe88/p/7158484.html)
+
+关机后重启 使用docker会出现
+> Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+
+解决可参 [Is the docker daemon running](https://blog.csdn.net/weixin_45496075/article/details/109123709)
+/etc/docker/daemon.json
+
+```json
+{
+   "registry-mirrors": [
+      "https://registry.docker-cn.com"
+   ]
+}
+```
+
+有段时间出现了异常 设置了下值 发现竟然是空间满了 删除了日志解决 MISCONF Redis is configured to save RDB snapshots
+[[230]连接Redis后执行命令错误 MISCONF Redis is configured to save RDB snapshots](https://blog.csdn.net/xc_zhou/article/details/80893326)
+[Docker容器日志查看与清理（亲测有效）](https://blog.csdn.net/yjk13703623757/article/details/80283729)
+[linux磁盘空间不足怎么办，磁盘清理方法](https://www.cnblogs.com/kisf/articles/4661398.html)
+[如何清理Linux服务器磁盘空间](https://blog.csdn.net/u012660464/article/details/78923011)
+
+#### 初入门
+
+[Redis 哨兵官方文档](https://redis.io/topics/sentinel)
+开始使用 Sentinel 最明显的事情是检查它正在监视的 master 是否运行良好
+
+```bash
+# redis-cli  -p 26379
+127.0.0.1:26379> sentinel master myredis
+ 1) "name"
+ 2) "myredis"
+ 3) "ip"
+ 4) "192.168.1.3"
+ 5) "port"
+ 6) "6379"
+ 7) "runid"
+ 8) "03c14fc0fcc954f311dec3bbe72e187d9e25b743"
+ 9) "flags"
+10) "master"
+11) "link-pending-commands"
+12) "0"
+13) "link-refcount"
+14) "1"
+15) "last-ping-sent"
+16) "0"
+17) "last-ok-ping-reply"
+18) "508"
+19) "last-ping-reply"
+20) "508"
+21) "down-after-milliseconds"
+22) "30000"
+23) "info-refresh"
+24) "1739"
+25) "role-reported"
+26) "master"
+27) "role-reported-time"
+28) "11516408"
+29) "config-epoch"
+30) "1"
+31) "num-slaves"
+32) "2"
+33) "num-other-sentinels"
+34) "0"
+35) "quorum"
+36) "1"
+37) "failover-timeout"
+38) "180000"
+39) "parallel-syncs"
+40) "1"
+
+```
+
+查看79
+
+```bash
+127.0.0.1:6379> auth 825z.jkc76
+OK
+127.0.0.1:6379> info replication
+# Replication
+role:slave
+master_host:192.168.1.3
+master_port:6379
+master_link_status:up
+master_last_io_seconds_ago:1
+master_sync_in_progress:0
+slave_read_repl_offset:24691
+slave_repl_offset:24691
+slave_priority:100
+slave_read_only:1
+replica_announced:1
+connected_slaves:0
+master_failover_state:no-failover
+master_replid:ef673fb279cbcf36ffabc19ee78ce2ce1cc18834
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:24691
+second_repl_offset:-1
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:17307
+repl_backlog_histlen:7385
+```
+
+80 情况
+
+```bash
+127.0.0.1:6379> info replication
+# Replication
+role:master
+connected_slaves:2
+slave0:ip=192.168.1.4,port=6379,state=online,offset=23017,lag=1
+slave1:ip=192.168.1.2,port=6379,state=online,offset=23017,lag=0
+master_failover_state:no-failover
+master_replid:ef673fb279cbcf36ffabc19ee78ce2ce1cc18834
+master_replid2:9d20d885df9a357e261fb461d8f16ae7cd7eea54
+master_repl_offset:23017
+second_repl_offset:14372
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:1
+repl_backlog_histlen:23017
+```
+
+81 情况
+
+```bash
+127.0.0.1:6379> info replication
+# Replication
+role:slave
+master_host:192.168.1.3
+master_port:6379
+master_link_status:up
+master_last_io_seconds_ago:0
+master_sync_in_progress:0
+slave_read_repl_offset:21629
+slave_repl_offset:21629
+slave_priority:100
+slave_read_only:1
+replica_announced:1
+connected_slaves:0
+master_failover_state:no-failover
+master_replid:ef673fb279cbcf36ffabc19ee78ce2ce1cc18834
+master_replid2:9d20d885df9a357e261fb461d8f16ae7cd7eea54
+master_repl_offset:21629
+second_repl_offset:14372
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:1
+repl_backlog_histlen:21629
+
+
+```
+
 ### Reference Documentation
 
 For further reference, please consider the following sections:
