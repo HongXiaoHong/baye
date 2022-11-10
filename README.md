@@ -496,6 +496,12 @@ Wrapper  条件构造抽象类
 可访问本地 [swagger-ui-localhost](http://localhost:8080/swagger-ui.html)
 查看接口列表 也可用于测试
 
+如果碰到错误
+> Failed to start bean ‘documentationPluginsBootstrapper‘
+
+换下低版本的jar包
+可参[Failed to start bean ‘documentationPluginsBootstrapper‘](https://blog.csdn.net/qq_42042158/article/details/121686751)
+
 #### redis
 
 ##### install
