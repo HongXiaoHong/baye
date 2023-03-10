@@ -1,5 +1,5 @@
 server:
-  port: 8989
+  port: 8990
 spring:
   # 配置数据库连接池
   datasource:
