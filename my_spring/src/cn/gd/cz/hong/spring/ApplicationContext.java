@@ -1,6 +1,8 @@
 package cn.gd.cz.hong.spring;
 
+import java.beans.Introspector;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Optional;
@@ -52,8 +54,13 @@ public class ApplicationContext {
                     Scope scopeAnnotation = clazz.getAnnotation(Scope.class);
                     // 因为原型模式也就是多例的情况下, 每次从容器中获取都会重新创建对象
                     // 不能每次创建都去扫描类路径, 所以这里需要把类相关的信息封装起来存储起来, 放到一个映射中
-                    String scope = Optional.of(scopeAnnotation).map(Scope::value).orElse("singleton");
-                    beanDefinitionMap.put(componentAnnotation.value(), new BeanDefinition(clazz, scope));
+                    String scope = Optional.ofNullable(scopeAnnotation).map(Scope::value).orElse("singleton");
+
+                    String beanName = componentAnnotation.value();
+                    if ("".equals(beanName)) {
+                        beanName = Introspector.decapitalize(clazz.getSimpleName());
+                    }
+                    beanDefinitionMap.put(beanName, new BeanDefinition(clazz, scope));
                 }
             }
 
@@ -78,6 +85,15 @@ public class ApplicationContext {
         Class clazz = beanDefinition.getClazz();
         try {
             result = clazz.getConstructor().newInstance();
+            // 创建的时候注入 @Autowired
+            Field[] declaredFields = clazz.getDeclaredFields();
+            for (Field declaredField : declaredFields) {
+                if (declaredField.isAnnotationPresent(Autowired.class)) {
+                    declaredField.setAccessible(true);
+                    declaredField.set(result, getBean(declaredField.getName()));
+                }
+            }
+
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);
@@ -97,6 +113,7 @@ public class ApplicationContext {
             if ("singleton".equals(definition.getScope())) {
                 Object obj = beanMap.get(beanName);
                 // 有可能懒加载, 容器加载时没有创建, 这里创建
+                // 这里判断的原因是解决依赖过程中 可能需要依赖的对象还没创建, 原来在这里创建
                 if (obj == null) {
                     obj = createBean(beanDefinition);
                     beanMap.put(beanName, obj);
