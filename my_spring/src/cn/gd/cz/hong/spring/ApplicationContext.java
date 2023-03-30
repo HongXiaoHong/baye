@@ -119,7 +119,7 @@ public class ApplicationContext {
             }
 
             for (BeanPostProcessor beanPostProcessor : beanPostProcessorList) {
-                beanPostProcessor.postProcessAfterInitialization(beanName, instance);
+                instance = beanPostProcessor.postProcessAfterInitialization(beanName, instance);
             }
 
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
