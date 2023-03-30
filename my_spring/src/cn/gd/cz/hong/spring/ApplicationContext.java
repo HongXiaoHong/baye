@@ -5,6 +5,8 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,6 +21,7 @@ public class ApplicationContext {
     Class configClazz;
     private ConcurrentHashMap<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, Object> beanMap = new ConcurrentHashMap<>();
+    private List<BeanPostProcessor> beanPostProcessorList = new ArrayList<>();
 
 
     public ApplicationContext(Class configClazz) {
@@ -26,12 +29,12 @@ public class ApplicationContext {
         try {
             // 模拟容器启动
             init();
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
-    private void init() throws ClassNotFoundException {
+    private void init() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         // 获取扫描路径
         ComponentScan componentScan = (ComponentScan) configClazz.getAnnotation(ComponentScan.class);
         String scanPath = componentScan.value();
@@ -51,6 +54,11 @@ public class ApplicationContext {
                 // 是否属于容器管理 + 单例/多例...
                 Component componentAnnotation = clazz.getAnnotation(Component.class);
                 if (componentAnnotation != null) {
+                    if (BeanPostProcessor.class.isAssignableFrom(clazz)) {
+                        BeanPostProcessor beanPostProcessor = (BeanPostProcessor) clazz.newInstance();
+                        beanPostProcessorList.add(beanPostProcessor);
+                    }
+
                     Scope scopeAnnotation = clazz.getAnnotation(Scope.class);
                     // 因为原型模式也就是多例的情况下, 每次从容器中获取都会重新创建对象
                     // 不能每次创建都去扫描类路径, 所以这里需要把类相关的信息封装起来存储起来, 放到一个映射中
@@ -81,36 +89,44 @@ public class ApplicationContext {
      * @return
      */
     private Object createBean(String beanName, BeanDefinition beanDefinition) {
-        Object result = null;
+        Object instance = null;
         Class clazz = beanDefinition.getClazz();
         try {
-            result = clazz.getConstructor().newInstance();
+            instance = clazz.getConstructor().newInstance();
             // 创建的时候注入 @Autowired
             Field[] declaredFields = clazz.getDeclaredFields();
             for (Field declaredField : declaredFields) {
                 if (declaredField.isAnnotationPresent(Autowired.class)) {
                     declaredField.setAccessible(true);
-                    declaredField.set(result, getBean(declaredField.getName()));
+                    declaredField.set(instance, getBean(declaredField.getName()));
                 }
             }
 
             // Aware实现类 回调注入容器中的对象
-            if (result instanceof BeanNameAware) {
+            if (instance instanceof BeanNameAware) {
                 // 原本这个方法是没有 beanName 的, 向上层索取了属于是
-                ((BeanNameAware) result).setBeanName(beanName);
+                ((BeanNameAware) instance).setBeanName(beanName);
+            }
+
+            for (BeanPostProcessor beanPostProcessor : beanPostProcessorList) {
+                beanPostProcessor.postProcessBeforeInitialization(beanName, instance);
             }
 
             // 初始化
-            if (result instanceof InitializingBean) {
+            if (instance instanceof InitializingBean) {
                 // 执行用户自定义的初始化
-                ((InitializingBean) result).afterPropertiesSet();
+                ((InitializingBean) instance).afterPropertiesSet();
+            }
+
+            for (BeanPostProcessor beanPostProcessor : beanPostProcessorList) {
+                beanPostProcessor.postProcessAfterInitialization(beanName, instance);
             }
 
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
-        return result;
+        return instance;
     }
 
     /**

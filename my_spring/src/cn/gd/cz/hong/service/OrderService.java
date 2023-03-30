@@ -24,6 +24,7 @@ public class OrderService implements BeanNameAware, InitializingBean {
     @Override
     public void afterPropertiesSet() {
         // 做一些不可描述的初始化动作
+        System.out.println("不可描述的初始化");
         x = "不可描述的初始化";
     }
 }
