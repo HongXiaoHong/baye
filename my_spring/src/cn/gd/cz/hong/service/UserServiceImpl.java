@@ -20,10 +20,10 @@ public class UserServiceImpl implements UserService {
     public User getUserById() {
         /*
          * orderService: cn.gd.cz.hong.service.OrderService@6f496d9f
-         * cn.gd.cz.hong.entity.User@30feb0
-         * @return
+         * orderService.beanName: orderService
          */
         System.out.println("orderService: " + getOrderService());
+        System.out.println("orderService.beanName: " + getOrderService().getBeanName());
         return new User("1", "hong");
     }
 

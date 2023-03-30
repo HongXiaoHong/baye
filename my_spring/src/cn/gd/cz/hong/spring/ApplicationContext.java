@@ -67,7 +67,7 @@ public class ApplicationContext {
             // 单例的bean首先被创建
             beanDefinitionMap.forEach((beanName, beanDefinition) -> {
                 if ("singleton".equals(beanDefinition.getScope())) {
-                    beanMap.put(beanName, createBean(beanDefinition));
+                    beanMap.put(beanName, createBean(beanName, beanDefinition));
                 }
             });
         }
@@ -80,7 +80,7 @@ public class ApplicationContext {
      * @param beanDefinition
      * @return
      */
-    private Object createBean(BeanDefinition beanDefinition) {
+    private Object createBean(String beanName, BeanDefinition beanDefinition) {
         Object result = null;
         Class clazz = beanDefinition.getClazz();
         try {
@@ -92,6 +92,12 @@ public class ApplicationContext {
                     declaredField.setAccessible(true);
                     declaredField.set(result, getBean(declaredField.getName()));
                 }
+            }
+
+            // Aware实现类 回调注入容器中的对象
+            if (result instanceof BeanNameAware) {
+                // 原本这个方法是没有 beanName 的, 向上层索取了属于是
+                ((BeanNameAware) result).setBeanName(beanName);
             }
 
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
@@ -115,13 +121,13 @@ public class ApplicationContext {
                 // 有可能懒加载, 容器加载时没有创建, 这里创建
                 // 这里判断的原因是解决依赖过程中 可能需要依赖的对象还没创建, 原来在这里创建
                 if (obj == null) {
-                    obj = createBean(beanDefinition);
+                    obj = createBean(beanName, beanDefinition);
                     beanMap.put(beanName, obj);
                 }
                 return obj;
             }
             // 多例需要重新创建
-            return createBean(definition);
+            return createBean(beanName, definition);
         }).get();
         return bean;
     }
