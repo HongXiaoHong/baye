@@ -100,6 +100,12 @@ public class ApplicationContext {
                 ((BeanNameAware) result).setBeanName(beanName);
             }
 
+            // 初始化
+            if (result instanceof InitializingBean) {
+                // 执行用户自定义的初始化
+                ((InitializingBean) result).afterPropertiesSet();
+            }
+
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);
