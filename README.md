@@ -10,8 +10,13 @@
 
 **分支名 | 简介**
 
-### random-image | 前后端分离之随机使用图片展示
+### background-task | 后台任务
 
-前端使用
-https://github.com/HongXiaoHong/hongtu
-后端使用 random 中的 api module 启动后台
+module
+
+- Overdue payment statistics | 欠费统计
+  - 调用接口对欠费用户进行统计
+  - 之所以不进行直接统计是因为欠费的数据他不在我们这边
+  - 我们需要调用接口进行欠费用户的统计
+  - 通过 在 properties 配置文件中动态配置 cron 表达式, 而不再代码中写
+  - 通过 forkjoin 进行优化
