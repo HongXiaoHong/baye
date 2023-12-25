@@ -1,0 +1,21 @@
+elasticjob:
+  regCenter:
+    #zookeeper 的ip:port
+    serverLists: 127.0.0.1:11181
+    #名命空间，自己定义就好了
+    namespace: hong
+  jobs:
+    #你的这个定时任务名称，自定义名称
+    myElasticJob:
+      #定时任务的全路径名
+      elasticJobClass: cn.hong.xxl.job.demo.job.HelloJob
+      #定时任务执行的cron表达式
+      cron: 0/5 * * * * ?
+      #分片数量
+      shardingTotalCount: 1
+    scriptJob:
+      elasticJobType: SCRIPT
+      cron: 0/10 * * * * ?
+      shardingTotalCount: 1
+      props:
+        script.command.line: "echo SCRIPT Job: "
