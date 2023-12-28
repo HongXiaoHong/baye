@@ -9,7 +9,7 @@ from music_magnetic_field_list import dowload_music_magnetic_field_music
 
 scheduler = BlockingScheduler()
 
-scheduler.add_job(dowload_music_magnetic_field_music, CronTrigger.from_crontab('*/5 * * * *'))
+scheduler.add_job(dowload_music_magnetic_field_music, CronTrigger.from_crontab('*/10 * * * *'))
 
 # def my_clock():
 #     print(f"hello! now is {datetime.now()}")
