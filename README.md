@@ -15,3 +15,8 @@
 前端使用
 https://github.com/HongXiaoHong/hongtu
 后端使用 random 中的 api module 启动后台
+
+学习请到 demo 项目
+这里放的是成品
+
+cn.hong.spring.cloud.parent 用来作为 springcloud 项目的父节点
